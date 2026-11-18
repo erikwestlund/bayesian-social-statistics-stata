@@ -40,5 +40,6 @@ log using `"$logs/master_`stamp'.log"', name(master) text replace
 * Add one line per do-file, in the order they run, for example:
 * do `"$do/import.do"'
 do `"$do/01_fetch_hsls.do"'
+do `"$do/02_clean_hsls.do"'
 
 log close master

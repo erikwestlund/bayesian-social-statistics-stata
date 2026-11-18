@@ -44,6 +44,17 @@ default:
   # that. Read an entry with fw_use inputs.private.raw.hsls_student.
   data:
     inputs:
+      public:
+        raw:
+          hsls_crosswalk:
+            path: inputs/public/raw/hsls_crosswalk.csv
+            type: csv
+            description: >-
+              New names for the HSLS:09 variables the series uses, with labels,
+              recodes, value labels, and two kinds of reserve codes: nonresponse
+              (missing) and logical skips (skip). Flags record which kind each
+              missing value is. docs/missing-data.md explains the codes. The R,
+              Python, and Stata projects keep identical copies.
       private:
         raw:
           hsls_zip:
@@ -69,6 +80,18 @@ default:
             type: csv
             locked: true
             description: HSLS:09 base-year school file, extracted from hsls_zip.
+        final:
+          hsls_clean:
+            path: inputs/private/final/hsls_clean.csv
+            type: csv
+            description: >-
+              One row per HSLS:09 student with the crosswalk's variables under
+              their new names. Built by do/02_clean_hsls.do.
+          hsls_clean_stata:
+            path: inputs/private/final/hsls_clean.dta
+            type: dta
+            description: >-
+              The same file as hsls_clean, with Stata variable and value labels.
 
   # This project holds restricted data: fw_table and fw_graph save to the
   # private folders unless told public.
