@@ -38,7 +38,37 @@ default:
   #           survey:
   #             path: inputs/private/raw/survey.csv
   #             locked: true
-  data: {}
+  # HSLS:09 comes from NCES as a public-use file, but it stays under
+  # private/: the files are large, and readers should download them from NCES
+  # and accept its data usage agreement themselves. do/01_fetch_hsls.do does
+  # that. Read an entry with fw_use inputs.private.raw.hsls_student.
+  data:
+    inputs:
+      private:
+        raw:
+          hsls_zip:
+            path: inputs/private/raw/hsls/HSLS_2016_v1_0_CSV_Datasets.zip
+            locked: true
+            description: >-
+              HSLS:09 base year to second follow-up public-use file, CSV
+              (NCES 2018-142), as downloaded from
+              https://nces.ed.gov/EDAT/Data/Zip/HSLS_2016_v1_0_CSV_Datasets.zip.
+              SHA-256 a4de968eefbac25a2b6f7337931f8c8051ddfcd2fd82920041a3c8abbebbd4aa.
+              NCES data usage agreement: statistical use only, no attempt to
+              identify anyone, no linking to identifiable data.
+          hsls_student:
+            path: inputs/private/raw/hsls/hsls_16_student_v1_0.csv
+            type: csv
+            locked: true
+            description: >-
+              HSLS:09 student file, extracted from hsls_zip. One row per
+              student (23,503), 8,509 variables. Missing values are negative
+              codes (-9, -8, -7, ...), not blanks.
+          hsls_school:
+            path: inputs/private/raw/hsls/hsls_09_school_v1_0.csv
+            type: csv
+            locked: true
+            description: HSLS:09 base-year school file, extracted from hsls_zip.
 
   # This project holds restricted data: fw_table and fw_graph save to the
   # private folders unless told public.
