@@ -1,0 +1,57 @@
+{
+  "schema": 1,
+  "skills": {
+    "account:https://framework.pub:framework:git-workflow:stata": {
+      "paths": [
+        ".agents/skills/git-workflow"
+      ],
+      "variant": "stata",
+      "server": "https://framework.pub",
+      "skill_id": "framework:git-workflow",
+      "version": 2,
+      "hash": "cdbce1802bc49454803c0c9b2828d7bd3ff7c60e6f19c23f3954417ede300a81"
+    },
+    "account:https://framework.pub:framework:stata-graphs:stata": {
+      "paths": [
+        ".agents/skills/stata-graphs"
+      ],
+      "variant": "stata",
+      "server": "https://framework.pub",
+      "skill_id": "framework:stata-graphs",
+      "version": 4,
+      "hash": "7ba0c04467d1b271c2035b05f0e0aa10e53de5677d3fd5df4d3ec227a6221f40"
+    },
+    "account:https://framework.pub:framework:writing:stata": {
+      "paths": [
+        ".agents/skills/writing"
+      ],
+      "variant": "stata",
+      "server": "https://framework.pub",
+      "skill_id": "framework:writing",
+      "version": 5,
+      "hash": "221f7654be8309f0020f90a81eda7f76fcadb34448c33201ff3cfa71f9f6250f"
+    },
+    "package:framework-sensitive-data": {
+      "paths": [
+        ".agents/skills/framework-sensitive-data"
+      ],
+      "variant": "stata",
+      "hash": "598917f2cdf428dcfd83ed9ad0d81a50f7beccb20edebc8dccd8e7ab8748e36c",
+      "origin": {
+        "skill_id": "framework:framework-sensitive-data",
+        "hash": "598917f2cdf428dcfd83ed9ad0d81a50f7beccb20edebc8dccd8e7ab8748e36c"
+      }
+    },
+    "package:framework-stata": {
+      "paths": [
+        ".agents/skills/framework-stata"
+      ],
+      "variant": "stata",
+      "hash": "531a81d02322cd44aaabc996f8f5a850b096f6de24ac635391e693c2b6ac4596",
+      "origin": {
+        "skill_id": "framework:framework-stata",
+        "hash": "531a81d02322cd44aaabc996f8f5a850b096f6de24ac635391e693c2b6ac4596"
+      }
+    }
+  }
+}

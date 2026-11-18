@@ -1,0 +1,74 @@
+# settings.yml: settings that fw, R, Python, and Stata share
+#
+# settings.do holds the path globals that do-files use, such as $inputs_raw.
+# This file holds the project name, the data catalog for fw_use and fw_save,
+# the publishing destinations for fw_publish, and the security settings.
+# Framework for Stata (fw_project) reads both files. The directories below
+# match settings.do. When the two set a folder differently, this file wins
+# and fw_project notes it, so change a folder in both.
+default:
+  project_name: bayesian-social-statistics-stata
+  directories:
+    do: do
+    docs: docs
+    inputs_private_final: inputs/private/final
+    inputs_private_intermediate: inputs/private/intermediate
+    inputs_private_raw: inputs/private/raw
+    inputs_public_final: inputs/public/final
+    inputs_public_intermediate: inputs/public/intermediate
+    inputs_public_raw: inputs/public/raw
+    logs: logs
+    cache: outputs/private/cache
+    outputs_private_figures: outputs/private/figures
+    outputs_private_reports: outputs/private/reports
+    outputs_private_tables: outputs/private/tables
+    outputs_public_figures: outputs/public/figures
+    outputs_public_reports: outputs/public/reports
+    outputs_public_tables: outputs/public/tables
+    scratch: scratch
+
+  # The data catalog. fw_use and fw_save take a catalog name in place of a
+  # path, such as inputs.private.raw.survey, and check the file's checksum when
+  # the entry is locked:
+  #
+  #   data:
+  #     inputs:
+  #       private:
+  #         raw:
+  #           survey:
+  #             path: inputs/private/raw/survey.csv
+  #             locked: true
+  data: {}
+
+  # This project holds restricted data: fw_table and fw_graph save to the
+  # private folders unless told public.
+  security:
+    sensitive: true
+
+  # Packages the do-files use. fw_packages installs the missing ones from
+  # SSC, GitHub (repo, and ref for a version), or a web address (url).
+  # project_ado: true installs them into ado/plus in the project folder.
+  packages:
+    project_ado: true
+    default_packages: []
+
+  # fw_scaffold reads these, as scaffold() does in R and Python: the random
+  # seed, the graph scheme (stata_scheme, with set_theme_on_scaffold: true),
+  # and whether programs in the functions folder load by name.
+  scaffold:
+    seed_on_scaffold: true
+    seed: "123"
+    set_theme_on_scaffold: false
+    stata_scheme: s2color
+    source_all_functions: true
+
+  # Publishing destinations for fw_publish, to(NAME). A folder destination
+  # writes each result, with its versions and an offline reader, under path:
+  #
+  #   publish:
+  #     default: results
+  #     destinations:
+  #       results:
+  #         driver: folder
+  #         path: published
+  #         visibility: private

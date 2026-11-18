@@ -1,0 +1,43 @@
+* master.do: runs every step of bayesian-social-statistics-stata in order
+*
+* Open Stata in the project folder, then run:  do master.do
+* Each step is its own do-file. To add a step, write the do-file and add a
+* line below.
+
+version 14
+clear all
+set more off
+
+* New numeric variables are float unless set otherwise, which keeps about 7
+* significant digits, so means and shares can differ from R and Python after
+* the 7th digit. Uncomment the next line to make them double. A collapse
+* (mean) of a byte, int, or float variable can still come out float, so
+* recast it first (recast double count) when results must match.
+* set type double
+
+do "settings.do"
+
+* fw_project reads settings.do and settings.yml, and sets $fw_root,
+* $fw_project_name, and an $fw_ global for each folder that fw_use, fw_save,
+* fw_table, fw_graph, and fw_publish use. It comes with framework-stata 0.2.0
+* or later, the first with fw_table.
+capture which fw_table
+if _rc {
+    display as error "master.do needs framework-stata 0.2.0 or later. Install or update it with:"
+    display as error `"  net install framework, from("https://raw.githubusercontent.com/frameworktools/framework-stata/main") replace"'
+    exit 199
+}
+* fw_scaffold (framework-stata 0.3.0) runs fw_project, installs the packages
+* in settings.yml, and sets the seed and graph scheme from scaffold:.
+capture which fw_scaffold
+if _rc fw_project
+else fw_scaffold
+
+capture log close master
+local stamp = subinstr("`c(current_date)'", " ", "", .) + "_" + subinstr("`c(current_time)'", ":", "", .)
+log using `"$logs/master_`stamp'.log"', name(master) text replace
+
+* Add one line per do-file, in the order they run, for example:
+* do `"$do/import.do"'
+
+log close master
