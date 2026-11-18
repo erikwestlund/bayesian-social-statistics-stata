@@ -1,0 +1,260 @@
+{
+    "name": "bayesian-social-statistics-stata",
+    "spec_version": 1,
+    "author": {
+        "name": "Erik",
+        "email": "ewestlund@jhu.edu",
+        "affiliation": "Johns Hopkins Bloomberg School of Public Health",
+        "url": "https://erik-westlund.academic.page",
+        "affiliations": [
+            {
+                "city": "Baltimore",
+                "name": "Johns Hopkins Bloomberg School of Public Health",
+                "country": "United States",
+                "department": "Department of Biostatistics"
+            }
+        ]
+    },
+    "layers": [
+        {
+            "kind": "base",
+            "key": "framework/project_sensitive",
+            "version": 5,
+            "layer": {
+                "git": {
+                    "gitignore_content": "# Private data and credentials\n**/private/**\n**/*_private/**\n.env\n.env.*\n!.env.example\n.Renviron\n**/credentials/**\n**/secrets/**\n\n# Local records and caches\nframework.db\nframework.db-wal\nframework.db-shm\n.DS_Store\n\n# Sensitive project folders\n/inputs/private/\n/reference/private/\n/outputs/private/\n**/sensitive/**\n\n# Run logs\n/logs/\n"
+                },
+                "type": "project_sensitive",
+                "quarto": {
+                    "render_dir": "outputs/public/docs"
+                },
+                "security": {
+                    "sensitive": true
+                },
+                "directories": {
+                    "docs": "docs",
+                    "logs": "logs",
+                    "cache": "outputs/private/cache",
+                    "scratch": "scratch",
+                    "scripts": "scripts",
+                    "functions": "functions",
+                    "notebooks": "notebooks",
+                    "inputs_public_raw": "inputs/public/raw",
+                    "inputs_private_raw": "inputs/private/raw",
+                    "inputs_public_final": "inputs/public/final",
+                    "inputs_private_final": "inputs/private/final",
+                    "outputs_public_models": "outputs/public/models",
+                    "outputs_public_tables": "outputs/public/tables",
+                    "outputs_private_models": "outputs/private/models",
+                    "outputs_private_tables": "outputs/private/tables",
+                    "outputs_public_figures": "outputs/public/figures",
+                    "outputs_public_reports": "outputs/public/reports",
+                    "outputs_private_figures": "outputs/private/figures",
+                    "outputs_private_reports": "outputs/private/reports",
+                    "inputs_public_intermediate": "inputs/public/intermediate",
+                    "inputs_private_intermediate": "inputs/private/intermediate"
+                },
+                "render_dirs": {
+                    "docs": "outputs/private/docs",
+                    "notebooks": "outputs/private/notebooks"
+                },
+                "settings_layout": "split"
+            }
+        },
+        {
+            "kind": "facet",
+            "key": "framework/framework",
+            "version": 2,
+            "layer": {}
+        },
+        {
+            "kind": "facet",
+            "key": "framework/framework-stata",
+            "version": 2,
+            "layer": {
+                "skills": {
+                    "framework-stata": {
+                        "package": true
+                    }
+                }
+            }
+        },
+        {
+            "kind": "facet",
+            "key": "framework/visualization",
+            "version": 4,
+            "layer": {}
+        },
+        {
+            "kind": "facet",
+            "key": "framework/visualization-stata",
+            "version": 4,
+            "layer": {
+                "skills": {
+                    "stata-graphs": {
+                        "sync": {
+                            "hash": "7ba0c04467d1b271c2035b05f0e0aa10e53de5677d3fd5df4d3ec227a6221f40",
+                            "server": "https://framework.pub",
+                            "variant": "stata",
+                            "version": 4,
+                            "skill_id": "framework:stata-graphs"
+                        },
+                        "bundle": [
+                            {
+                                "path": "SKILL.md",
+                                "content": "LS0tCm5hbWU6IHN0YXRhLWdyYXBocwpkZXNjcmlwdGlvbjogVXNlIHdoZW4gbWFraW5nIGEgU3RhdGEgZ3JhcGgsIGZyb20gYSBxdWljayBsb29rIGF0IHRoZSBkYXRhIHRvIGEgZ3JhcGggZm9yIGEgcGFwZXIsIHJlcG9ydCwgcG9zdGVyLCBvciBzbGlkZXMuIENvdmVycyBjaG9vc2luZyB0aGUgZ3JhcGgsIGFjY3VyYXRlIGRlZmF1bHRzLCB0aXRsZXMgYW5kIGxhYmVscywgYWNjZXNzaWJsZSBjb2xvciwgaG9uZXN0IHNjYWxlcywgc2NoZW1lcywgYW5kIHNhdmluZy4KbWV0YWRhdGE6CiAgdGl0bGU6IEdyYXBocyBpbiBTdGF0YQogIHN1bW1hcnk6IEFjY3VyYXRlIFN0YXRhIGdyYXBocywgZnJvbSBleHBsb3JpbmcgZGF0YSB0byBwdWJsaWNhdGlvbi4KLS0tCgojIEdyYXBocyBpbiBTdGF0YQoKIyMgR3JhcGggY2hvaWNlCgpWYWx1ZXMgb24gYSBzaGFyZWQgYXhpcyBhcmUgdGhlIGVhc2llc3QgdG8gY29tcGFyZS4KCnwgUXVlc3Rpb24gfCBHcmFwaCB8IFN0YXRhIHwKfC0tLXwtLS18LS0tfAp8IERpc3RyaWJ1dGlvbiBvZiBvbmUgbnVtZXJpYyB2YXJpYWJsZSB8IEhpc3RvZ3JhbSB8IGBoaXN0b2dyYW0geCwgd2lkdGgoLi4uKWAgfAp8IEEgbnVtZXJpYyB2YXJpYWJsZSBhY3Jvc3MgZ3JvdXBzIHwgQm94IHBsb3QgfCBgZ3JhcGggYm94IHksIG92ZXIoZ3JvdXApYCB8CnwgQ291bnRzIGJ5IGNhdGVnb3J5IHwgQmFyIGNoYXJ0LCBzb3J0ZWQgfCBgZ3JhcGggaGJhciAoY291bnQpLCBvdmVyKGNhdCwgc29ydCgxKSBkZXNjZW5kaW5nKWAgfAp8IFR3byBudW1lcmljIHZhcmlhYmxlcyB8IFNjYXR0ZXJwbG90IHwgYHNjYXR0ZXIgeSB4YCwgYHR3b3dheSAoc2NhdHRlciB5IHgpIChsZml0IHkgeClgIHwKfCBDaGFuZ2Ugb3ZlciB0aW1lIG9yIGFub3RoZXIgb3JkZXJlZCB2YXJpYWJsZSB8IExpbmUgY2hhcnQgfCBgdHdvd2F5IGxpbmUgeSB0aW1lLCBzb3J0YCB8CnwgQSBwYXR0ZXJuIGFjcm9zcyBzdWJncm91cHMgfCBTbWFsbCBtdWx0aXBsZXMgfCBgYnkoZ3JvdXApYCBvbiBtb3N0IGdyYXBocyB8CgpBdm9pZCBkdWFsIHkgYXhlcyBhbmQgMy1EIGVmZmVjdHMuIEluIGEgc3RhY2tlZCBiYXIsIG9ubHkgdGhlIGJvdHRvbSBzZWdtZW50CnNpdHMgb24gYSBzaGFyZWQgYmFzZWxpbmUuCgojIyBBY2N1cmFjeQoKLSAqKkhpc3RvZ3JhbXM6Kiogc2V0IGB3aWR0aCgpYCBpbiB0aGUgdW5pdHMgb2YgdGhlIHZhcmlhYmxlLCBhbmQgdHJ5IG1vcmUKICB0aGFuIG9uZS4gQWRkIGBmcmVxdWVuY3lgIHdoZW4gY291bnRzIG1hdHRlciBtb3JlIHRoYW4gZGVuc2l0eS4KLSAqKkdyb3VwcyBpbiBvbmUgc2NhdHRlcnBsb3Q6KiogYHNlcGFyYXRlIHksIGJ5KGdyb3VwKWAgYW5kIGdyYXBoIHRoZSBuZXcKICB2YXJpYWJsZXMsIG9yIG92ZXJsYXkgb25lIGBzY2F0dGVyYCBwZXIgZ3JvdXAuCi0gKipPdmVycGxvdHRpbmc6KiogdXNlIHNtYWxsZXIgbWFya2VycywgYG1zaXplKHNtYWxsKWAsIGFuZCB0cmFuc3BhcmVuY3ksCiAgYG1jb2xvciglNDApYC4KLSAqKlNrZXdlZCB2YXJpYWJsZXM6KiogdXNlIGB4c2NhbGUobG9nKWAgb3IgYHlzY2FsZShsb2cpYCBmb3Igc3Ryb25nbHkKICByaWdodC1za2V3ZWQgdmFsdWVzLiBTYXkgc28gaW4gdGhlIGF4aXMgdGl0bGUuCi0gKipCYXJzOioqIGJhcnMgc3RhcnQgYXQgemVyby4gVXNlIGBncmFwaCBkb3RgIHdoZW4gemVybyBpcyBub3QgbWVhbmluZ2Z1bC4KLSAqKk9yZGVyOioqIHNvcnQgY2F0ZWdvcmllcyBieSB2YWx1ZSB1bmxlc3MgdGhleSBoYXZlIGEgbmF0dXJhbCBvcmRlci4KLSAqKk1pc3NpbmctdmFsdWUgY29kZXM6KiogY2hlY2sgdGhlIGNvZGVib29rIGZvciBjb2RlcyBzdWNoIGFzIC05OSBiZWZvcmUKICBwbG90dGluZywgYW5kIHJlY29kZSB0aGVtIHRvIG1pc3NpbmcuCi0gKipNaXNzaW5nIHZhbHVlczoqKiBncmFwaHMgZHJvcCBtaXNzaW5nIHZhbHVlcyB3aXRob3V0IGEgbm90ZS4gQ2hlY2sgdGhlbQogIHdpdGggYG1pc3N0YWJsZSBzdW1tYXJpemVgIGJlZm9yZSB5b3UgdHJ1c3QgdGhlIGdyYXBoLgotICoqUGFuZWxzOioqIHBhbmVscyB0aGF0IHJlYWRlcnMgY29tcGFyZSBzaGFyZSBheGlzIHNjYWxlcywgdGhlIGBieSgpYAogIGRlZmF1bHQuIE5vdGUgYW55IGNoYW5nZSB0byB0aGF0IGluIHRoZSBjYXB0aW9uLgoKIyMgVGl0bGVzIGFuZCBsYWJlbHMKCi0gKipBeGVzOioqIHVzZSB2YXJpYWJsZSBsYWJlbHMgd2l0aCB1bml0cy4gUmVwbGFjZSByYXcgdmFyaWFibGUgbmFtZXMuCi0gKipUaXRsZToqKiBhIHRpdGxlIHRoYXQgc3RhdGVzIHRoZSBmaW5kaW5nIGNhbiBoZWxwIGEgZ3JhcGggY29tbXVuaWNhdGUgaXRzCiAgcmVzdWx0LiBNYWtlIHN1cmUgaXQgc3VpdHMgdGhlIHZlbnVlLiBTb21lIGpvdXJuYWxzIGFuZCByZWFkZXJzIHByZWZlciBhCiAgbWF0dGVyLW9mLWZhY3QgdGl0bGUgdGhhdCBuYW1lcyB0aGUgdmFyaWFibGVzLiBGb2xsb3cgdGhlIHZlbnVlJ3Mgc3R5bGUsIGFuZAogIGFzayB0aGUgdXNlciB3aGVuIGl0IGlzIHVuY2xlYXIuIERvIG5vdCBpbnZlbnQgYSBmaW5kaW5nLgotICoqU3VidGl0bGUgYW5kIG5vdGU6Kiogc2F5IHdoYXQgaXMgbWVhc3VyZWQsIGZvciB3aG9tLCBhbmQgd2hlbi4gR2l2ZSB0aGUKICBkYXRhIHNvdXJjZSwgdGhlIHNhbXBsZSBzaXplLCBhbmQgY2F2ZWF0cy4KLSAqKkxlZ2VuZHM6KiogcGxhY2UgdGhlbSBuZWFyIHRoZSBkYXRhLCBhbmQga2VlcCBjYXRlZ29yaWVzIGluIHRoZSBzYW1lIG9yZGVyCiAgYWNyb3NzIGdyYXBocy4KLSAqKlVuY2VydGFpbnR5OioqIGNvbXB1dGUgcHJlZGljdGlvbnMgYW5kIGNvbnRyYXN0cyBmcm9tIHRoZSBmaXR0ZWQgbW9kZWwsCiAgYW5kIHN0YXRlIHRoZSBpbnRlcnZhbCBsZXZlbCBpbiB0aGUgbm90ZS4gTGFiZWwgYSBjb25maWRlbmNlIGludGVydmFsIGFzCiAgdW5jZXJ0YWludHkgaW4gdGhlIGVzdGltYXRlLgoKIyMgQ29sb3IKCi0gVXNlIGNvbG9ycyByZWFkYWJsZSB3aXRoIGNvbG9yIHZpc2lvbiBkZWZpY2llbmN5LgotIFBhaXIgY29sb3Igd2l0aCBtYXJrZXIgc3ltYm9scyBvciBsaW5lIHBhdHRlcm5zLCBzbyB0aGUgZ3JhcGggc3RpbGwgd29ya3MgaW4KICBncmF5c2NhbGUuCgojIyBTY2hlbWVzCgpBIHNoYXJlZCBzY2hlbWUgaXMgYSBnb29kIHRhY3RpYyB3aGVuIGEgcHJvamVjdCBtYWtlcyBtYW55IGdyYXBocy4gSXQga2VlcHMKdGhlbSBjb25zaXN0ZW50LiBJZiB0aGUgcHJvamVjdCBhbHJlYWR5IHNldHMgb25lLCB1c2UgaXQuCgojIyBTYXZpbmcKCi0gTmFtZSBncmFwaHMgd2l0aCBgbmFtZSguLi4sIHJlcGxhY2UpYCB0byBjb21wYXJlIG9yIGNvbWJpbmUgdGhlbSBsYXRlci4KLSBTZXQgdGhlIHNpemUgYmVmb3JlIHR1bmluZyB0ZXh0LCBhbmQgY2hlY2sgdGhlIGV4cG9ydGVkIGZpbGUgZm9yIGNsaXBwZWQKICBsYWJlbHMgYW5kIHVucmVhZGFibGUgdGV4dC4KLSBVc2UgYHByZXNlcnZlYCBhbmQgYHJlc3RvcmVgIGFyb3VuZCBgY29sbGFwc2VgIG9yIGBjb250cmFjdGAsIHNvIGEgZ3JhcGgKICBuZWVkcyBubyBleHRyYSBkYXRhc2V0LgotIEluIGEgRnJhbWV3b3JrIHByb2plY3QsIHByZWZlciBgZndfZ3JhcGggIm5hbWUiYC4gSXQgZXhwb3J0cyB0aGUgY3VycmVudAogIGdyYXBoIHRvIHRoZSBmaWd1cmVzIGZvbGRlci4gT3RoZXJ3aXNlIHVzZSBgZ3JhcGggZXhwb3J0YCB3aXRoIGV4cGxpY2l0CiAgZGltZW5zaW9ucyBmb3IgcmFzdGVyIGZvcm1hdHMuCg==",
+                                "executable": false
+                            }
+                        ],
+                        "content": "---\nname: stata-graphs\ndescription: Use when making a Stata graph, from a quick look at the data to a graph for a paper, report, poster, or slides. Covers choosing the graph, accurate defaults, titles and labels, accessible color, honest scales, schemes, and saving.\nmetadata:\n  title: Graphs in Stata\n  summary: Accurate Stata graphs, from exploring data to publication.\n---\n\n# Graphs in Stata\n\n## Graph choice\n\nValues on a shared axis are the easiest to compare.\n\n| Question | Graph | Stata |\n|---|---|---|\n| Distribution of one numeric variable | Histogram | `histogram x, width(...)` |\n| A numeric variable across groups | Box plot | `graph box y, over(group)` |\n| Counts by category | Bar chart, sorted | `graph hbar (count), over(cat, sort(1) descending)` |\n| Two numeric variables | Scatterplot | `scatter y x`, `twoway (scatter y x) (lfit y x)` |\n| Change over time or another ordered variable | Line chart | `twoway line y time, sort` |\n| A pattern across subgroups | Small multiples | `by(group)` on most graphs |\n\nAvoid dual y axes and 3-D effects. In a stacked bar, only the bottom segment\nsits on a shared baseline.\n\n## Accuracy\n\n- **Histograms:** set `width()` in the units of the variable, and try more\n  than one. Add `frequency` when counts matter more than density.\n- **Groups in one scatterplot:** `separate y, by(group)` and graph the new\n  variables, or overlay one `scatter` per group.\n- **Overplotting:** use smaller markers, `msize(small)`, and transparency,\n  `mcolor(%40)`.\n- **Skewed variables:** use `xscale(log)` or `yscale(log)` for strongly\n  right-skewed values. Say so in the axis title.\n- **Bars:** bars start at zero. Use `graph dot` when zero is not meaningful.\n- **Order:** sort categories by value unless they have a natural order.\n- **Missing-value codes:** check the codebook for codes such as -99 before\n  plotting, and recode them to missing.\n- **Missing values:** graphs drop missing values without a note. Check them\n  with `misstable summarize` before you trust the graph.\n- **Panels:** panels that readers compare share axis scales, the `by()`\n  default. Note any change to that in the caption.\n\n## Titles and labels\n\n- **Axes:** use variable labels with units. Replace raw variable names.\n- **Title:** a title that states the finding can help a graph communicate its\n  result. Make sure it suits the venue. Some journals and readers prefer a\n  matter-of-fact title that names the variables. Follow the venue's style, and\n  ask the user when it is unclear. Do not invent a finding.\n- **Subtitle and note:** say what is measured, for whom, and when. Give the\n  data source, the sample size, and caveats.\n- **Legends:** place them near the data, and keep categories in the same order\n  across graphs.\n- **Uncertainty:** compute predictions and contrasts from the fitted model,\n  and state the interval level in the note. Label a confidence interval as\n  uncertainty in the estimate.\n\n## Color\n\n- Use colors readable with color vision deficiency.\n- Pair color with marker symbols or line patterns, so the graph still works in\n  grayscale.\n\n## Schemes\n\nA shared scheme is a good tactic when a project makes many graphs. It keeps\nthem consistent. If the project already sets one, use it.\n\n## Saving\n\n- Name graphs with `name(..., replace)` to compare or combine them later.\n- Set the size before tuning text, and check the exported file for clipped\n  labels and unreadable text.\n- Use `preserve` and `restore` around `collapse` or `contract`, so a graph\n  needs no extra dataset.\n- In a Framework project, prefer `fw_graph \"name\"`. It exports the current\n  graph to the figures folder. Otherwise use `graph export` with explicit\n  dimensions for raster formats.\n"
+                    }
+                }
+            }
+        },
+        {
+            "kind": "facet",
+            "key": "framework/writing",
+            "version": 4,
+            "layer": {}
+        },
+        {
+            "kind": "facet",
+            "key": "framework/writing-stata",
+            "version": 4,
+            "layer": {
+                "skills": {
+                    "writing": {
+                        "sync": {
+                            "hash": "221f7654be8309f0020f90a81eda7f76fcadb34448c33201ff3cfa71f9f6250f",
+                            "server": "https://framework.pub",
+                            "variant": "stata",
+                            "version": 5,
+                            "skill_id": "framework:writing"
+                        },
+                        "bundle": [
+                            {
+                                "path": "SKILL.md",
+                                "content": "LS0tCm5hbWU6IHdyaXRpbmcKZGVzY3JpcHRpb246IFVzZSBiZWZvcmUgd3JpdGluZyBvciBlZGl0aW5nIHByb3NlIGluIGEgZGF0YSBhbmFseXNpcyBwcm9qZWN0LCBzdWNoIGFzIHRleHQgYWJvdXQgcmVzdWx0cywgbm90ZWJvb2sgdGV4dCwgY2FwdGlvbnMsIFJFQURNRXMsIGFuZCBzdW1tYXJpZXMgb2YgZmluZGluZ3MuIENvdmVycyBhIHBsYWluIHJlZ2lzdGVyLCBudW1iZXJzIHdpdGggdGhlaXIgdW5jZXJ0YWludHksIGNsYWltcyB0aGF0IG1hdGNoIHRoZSBkZXNpZ24sIGFuZCBjb25zaXN0ZW50IG5hbWVzLgptZXRhZGF0YToKICB0aXRsZTogV3JpdGluZwogIHN1bW1hcnk6IFBsYWluLCBleGFjdCBwcm9zZSBhYm91dCBkYXRhIGFuZCBmaW5kaW5ncy4KLS0tCgojIFdyaXRpbmcKCiMjIFJlZ2lzdGVyCgotIFByZWZlciBwbGFpbiBkZWNsYXJhdGl2ZSBzZW50ZW5jZXMgd2l0aCBvbmUgY2xhaW0gZWFjaC4KLSBVc2UgYnVsbGV0cyBmb3IgcGFyYWxsZWwgbGlzdHMgYW5kIHBhcmFncmFwaHMgZm9yIGFyZ3VtZW50cy4KLSBSZXBvcnQgbnVsbCBhbmQgdW5leHBlY3RlZCByZXN1bHRzIGluIHRoZSBzYW1lIHJlZ2lzdGVyIGFzIGV4cGVjdGVkIG9uZXMuCgojIyBOdW1iZXJzCgotIFVzZSBvbmx5IG51bWJlcnMgdGhhdCBjb21lIGZyb20gdGhlIGFuYWx5c2lzIG91dHB1dC4KLSBTdGF0ZSBhbiBlc3RpbWF0ZSB3aXRoIGl0cyB1bmNlcnRhaW50eSwgaXRzIHVuaXRzLCBhbmQgdGhlIHNhbXBsZSBpdAogIGRlc2NyaWJlczogIk1lYW4gc3lzdG9saWMgcHJlc3N1cmUgd2FzIDQuMiBtbUhnIGhpZ2hlciBpbiB0aGUgdHJlYXRtZW50CiAgZ3JvdXAgKDk1JSBDSSAxLjggdG8gNi42OyBuID0gNDEyKS4iCi0gR2l2ZSBjb3VudHMgd2l0aCB0aGVpciBkZW5vbWluYXRvcnM6ICIzOCBvZiA0MTIgcGFydGljaXBhbnRzICg5JSkiLgotIFJvdW5kIHRvIHRoZSBwcmVjaXNpb24gdGhlIGRhdGEgc3VwcG9ydHMsIGFuZCB1c2UgdGhlIHNhbWUgbnVtYmVyIG9mCiAgZGVjaW1hbHMgZm9yIHRoZSBzYW1lIHF1YW50aXR5IHRocm91Z2hvdXQuCi0gVXNlICJzdGF0aXN0aWNhbGx5IHNpZ25pZmljYW50IiBvbmx5IGFib3V0IGEgdGVzdC4KCiMjIENsYWltcwoKLSBVc2UgY2F1c2FsIHZlcmJzIHN1Y2ggYXMgImluY3JlYXNlZCIgYW5kICJjYXVzZWQiIGZvciByYW5kb21pemVkIG9yCiAgZXhwbGljaXRseSBjYXVzYWwgZGVzaWducy4KLSBGb3Igb2JzZXJ2YXRpb25hbCBhc3NvY2lhdGlvbnMsIHVzZSAid2FzIGFzc29jaWF0ZWQgd2l0aCIsICJ3YXMgaGlnaGVyCiAgYW1vbmciLCBvciAiZGlmZmVyZWQgYnkiLiBLZWVwIHRoZSBzYW1lIHZlcmJzIGluIHRpdGxlcyBhbmQgc3VtbWFyaWVzLgotIENhbGwgYW4gZXhwbG9yYXRvcnkgYW5hbHlzaXMgZXhwbG9yYXRvcnkuCi0gU3RhdGUgYSBsaW1pdGF0aW9uIG9uY2UsIHNwZWNpZmljYWxseSwgd2hlcmUgaXQgYXBwbGllczogIkluY29tZSB3YXMKICBzZWxmLXJlcG9ydGVkIGFuZCBtaXNzaW5nIGZvciAxNCUgb2YgaG91c2Vob2xkcy4iCgojIyBOYW1lcwoKLSBDYWxsIHZhcmlhYmxlcyBieSB3aGF0IHRoZXkgbWVhc3VyZSwgc3VjaCBhcyAiaG91c2Vob2xkIGluY29tZSIuIFVzZSBhCiAgY29sdW1uIG5hbWUgc3VjaCBhcyBgaGhfaW5jXzJgIG9ubHkgd2hlbiB0aGUgcmVhZGVyIG5lZWRzIHRvIGZpbmQgaXQgaW4gdGhlCiAgZGF0YS4KLSBHaXZlIGVhY2ggZ3JvdXAgb25lIG5hbWUgYW5kIGtlZXAgaXQuCi0gRGVmaW5lIGFuIGFiYnJldmlhdGlvbiBhdCBmaXJzdCB1c2UuCi0gVXNlIHRoZSBmaWVsZCdzIHRlcm1zIGZvciBzdGF0aXN0aWNhbCBjb25jZXB0cy4KCiMjIFdvcmRpbmcKClByZWZlciBwbGFpbiB3b3JkaW5nIHRvIHRoZXNlOgoKLSBPdmVyc2VsbGluZywgc3VjaCBhcyAic3RyaWtpbmciLCAicmVtYXJrYWJsZSIsICJjbGVhcmx5IHNob3dzIiwgYW5kCiAgInByb3ZlcyIuCi0gT3BlbmVycyBzdWNoIGFzICJJdCBpcyB3b3J0aCBub3RpbmcgdGhhdCIgYW5kICJJbnRlcmVzdGluZ2x5Ii4KLSBOYXJyYXRpb24gb2YgZWFjaCBzdGVwLCBzdWNoIGFzICJOb3cgd2UgbG9hZCB0aGUgZGF0YSIuIFNheSB3aGF0IGEgc3RlcCBpcwogIGZvci4KLSBTdGFja2VkIGhlZGdlcyBzdWNoIGFzICJtYXkgcG90ZW50aWFsbHkgc3VnZ2VzdCIuCg==",
+                                "executable": false
+                            }
+                        ],
+                        "content": "---\nname: writing\ndescription: Use before writing or editing prose in a data analysis project, such as text about results, notebook text, captions, READMEs, and summaries of findings. Covers a plain register, numbers with their uncertainty, claims that match the design, and consistent names.\nmetadata:\n  title: Writing\n  summary: Plain, exact prose about data and findings.\n---\n\n# Writing\n\n## Register\n\n- Prefer plain declarative sentences with one claim each.\n- Use bullets for parallel lists and paragraphs for arguments.\n- Report null and unexpected results in the same register as expected ones.\n\n## Numbers\n\n- Use only numbers that come from the analysis output.\n- State an estimate with its uncertainty, its units, and the sample it\n  describes: \"Mean systolic pressure was 4.2 mmHg higher in the treatment\n  group (95% CI 1.8 to 6.6; n = 412).\"\n- Give counts with their denominators: \"38 of 412 participants (9%)\".\n- Round to the precision the data supports, and use the same number of\n  decimals for the same quantity throughout.\n- Use \"statistically significant\" only about a test.\n\n## Claims\n\n- Use causal verbs such as \"increased\" and \"caused\" for randomized or\n  explicitly causal designs.\n- For observational associations, use \"was associated with\", \"was higher\n  among\", or \"differed by\". Keep the same verbs in titles and summaries.\n- Call an exploratory analysis exploratory.\n- State a limitation once, specifically, where it applies: \"Income was\n  self-reported and missing for 14% of households.\"\n\n## Names\n\n- Call variables by what they measure, such as \"household income\". Use a\n  column name such as `hh_inc_2` only when the reader needs to find it in the\n  data.\n- Give each group one name and keep it.\n- Define an abbreviation at first use.\n- Use the field's terms for statistical concepts.\n\n## Wording\n\nPrefer plain wording to these:\n\n- Overselling, such as \"striking\", \"remarkable\", \"clearly shows\", and\n  \"proves\".\n- Openers such as \"It is worth noting that\" and \"Interestingly\".\n- Narration of each step, such as \"Now we load the data\". Say what a step is\n  for.\n- Stacked hedges such as \"may potentially suggest\".\n"
+                    }
+                }
+            }
+        },
+        {
+            "kind": "facet",
+            "key": "framework/sensitive-data",
+            "version": 2,
+            "layer": {}
+        },
+        {
+            "kind": "facet",
+            "key": "framework/sensitive-data-stata",
+            "version": 2,
+            "layer": {
+                "skills": {
+                    "framework-sensitive-data": {
+                        "package": true
+                    }
+                }
+            }
+        },
+        {
+            "kind": "facet",
+            "key": "framework/workflow-scripts",
+            "version": 1,
+            "layer": {
+                "scaffold": {
+                    "workflow": "scripts",
+                    "notebook_format": "script"
+                }
+            }
+        },
+        {
+            "kind": "facet",
+            "key": "framework/git",
+            "version": 2,
+            "layer": {}
+        },
+        {
+            "kind": "facet",
+            "key": "framework/git-stata",
+            "version": 2,
+            "layer": {
+                "skills": {
+                    "git-workflow": {
+                        "sync": {
+                            "hash": "cdbce1802bc49454803c0c9b2828d7bd3ff7c60e6f19c23f3954417ede300a81",
+                            "server": "https://framework.pub",
+                            "variant": "stata",
+                            "version": 2,
+                            "skill_id": "framework:git-workflow"
+                        },
+                        "bundle": [
+                            {
+                                "path": "SKILL.md",
+                                "content": "LS0tCm5hbWU6IGdpdC13b3JrZmxvdwpkZXNjcmlwdGlvbjogVXNlIHdoZW4gcmV2aWV3aW5nIGNoYW5nZXMsIGNvbW1pdHRpbmcgYW5hbHlzaXMgd29yaywgcmVzb2x2aW5nIG1lcmdlIGNvbmZsaWN0cywgb3IgY29vcmRpbmF0aW5nIGJyYW5jaGVzIGluIGEgcmVzZWFyY2ggcmVwb3NpdG9yeS4KbWV0YWRhdGE6CiAgdGl0bGU6IFVzaW5nIEdpdCBpbiBhbiBhbmFseXNpcyBwcm9qZWN0CiAgc3VtbWFyeTogUmV2aWV3YWJsZSBHaXQgY2hhbmdlcyBmb3IgYW5hbHlzaXMgY29kZSBhbmQgcHJvamVjdCBmaWxlcy4KLS0tCgojIFVzaW5nIEdpdCBpbiBhbiBhbmFseXNpcyBwcm9qZWN0CgojIyBDaGFuZ2VzCgotIENoZWNrIHRoZSBicmFuY2gsIHN0YXR1cywgYW5kIGRpZmYgYmVmb3JlIGVkaXRpbmcgb3IgY29tbWl0dGluZy4KLSBLZWVwIHVucmVsYXRlZCB3b3JrIGFzIGl0IGlzLgotIFN0YWdlIGV4cGxpY2l0IHBhdGhzLCBzbyBnZW5lcmF0ZWQgb3V0cHV0LCBkYXRhLCBjcmVkZW50aWFscywgYW5kCiAgbWFjaGluZS1zcGVjaWZpYyBmaWxlcyBzdGF5IG91dCBvZiBjb21taXRzLgotIEtlZXAgZWFjaCBjb21taXQgdG8gb25lIGNvaGVyZW50IGNoYW5nZSwgYW5kIGRlc2NyaWJlIHdoYXQgY2hhbmdlZC4KCiMjIENvbmZsaWN0cwoKLSBSZXNvbHZlIG5vdGVib29rIGNvbmZsaWN0cyB3aXRoIG5vdGVib29rLWF3YXJlIHRvb2xzIHdoZW4gYXZhaWxhYmxlLgotIFJlZ2VuZXJhdGUgZ2VuZXJhdGVkIGZpbGVzIGZyb20gdGhlaXIgc291cmNlLgotIFJlcnVuIGFmZmVjdGVkIGFuYWx5c2VzIGFmdGVyIHJlc29sdmluZyBhIGNvbmZsaWN0LgoKIyMgU2hhcmVkIGhpc3RvcnkKCi0gTGVhdmUgc2hhcmVkIGhpc3RvcnkgYXMgaXQgaXMuIENoZWNrIGRpdmVyZ2VuY2UgYmVmb3JlIG1lcmdpbmcgb3IgcmViYXNpbmcuCi0gQ29tbWl0LCBwdXNoLCBhbmQgcHVibGlzaCBvbmx5IHdoZW4gdGhlIHVzZXIgYXNrcy4K",
+                                "executable": false
+                            }
+                        ],
+                        "content": "---\nname: git-workflow\ndescription: Use when reviewing changes, committing analysis work, resolving merge conflicts, or coordinating branches in a research repository.\nmetadata:\n  title: Using Git in an analysis project\n  summary: Reviewable Git changes for analysis code and project files.\n---\n\n# Using Git in an analysis project\n\n## Changes\n\n- Check the branch, status, and diff before editing or committing.\n- Keep unrelated work as it is.\n- Stage explicit paths, so generated output, data, credentials, and\n  machine-specific files stay out of commits.\n- Keep each commit to one coherent change, and describe what changed.\n\n## Conflicts\n\n- Resolve notebook conflicts with notebook-aware tools when available.\n- Regenerate generated files from their source.\n- Rerun affected analyses after resolving a conflict.\n\n## Shared history\n\n- Leave shared history as it is. Check divergence before merging or rebasing.\n- Commit, push, and publish only when the user asks.\n"
+                    }
+                }
+            }
+        },
+        {
+            "kind": "settings",
+            "key": "framework defaults",
+            "layer": {
+                "scaffold": {
+                    "seed_on_scaffold": true,
+                    "seed": "123",
+                    "set_theme_on_scaffold": false,
+                    "stata_scheme": "s2color",
+                    "source_all_functions": true
+                },
+                "packages": {
+                    "project_ado": true,
+                    "default_packages": {}
+                },
+                "ai": {
+                    "assistants": {
+                        "claude": false,
+                        "codex": false,
+                        "copilot": false
+                    }
+                }
+            }
+        },
+        {
+            "kind": "blueprint",
+            "key": "framework/project_sensitive",
+            "layer": {
+                "skills": {
+                    "framework-sensitive-data": {
+                        "package": true
+                    }
+                }
+            }
+        },
+        {
+            "kind": "project",
+            "key": "bayesian-social-statistics-stata",
+            "layer": {
+                "language": "stata",
+                "directories": {
+                    "scripts": null,
+                    "functions": null,
+                    "notebooks": null,
+                    "outputs_public_models": null,
+                    "outputs_private_models": null
+                },
+                "render_dirs": {
+                    "notebooks": null
+                }
+            }
+        }
+    ]
+}
