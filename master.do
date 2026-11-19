@@ -41,5 +41,6 @@ log using `"$logs/master_`stamp'.log"', name(master) text replace
 * do `"$do/import.do"'
 do `"$do/01_fetch_hsls.do"'
 do `"$do/02_clean_hsls.do"'
+do `"$do/03_describe_hsls.do"'
 
 log close master

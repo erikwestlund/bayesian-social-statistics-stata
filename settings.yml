@@ -18,8 +18,10 @@ default:
     inputs_public_intermediate: inputs/public/intermediate
     inputs_public_raw: inputs/public/raw
     logs: logs
+    notebooks: notebooks
     cache: outputs/private/cache
     outputs_private_figures: outputs/private/figures
+    outputs_private_notebooks: outputs/private/notebooks
     outputs_private_reports: outputs/private/reports
     outputs_private_tables: outputs/private/tables
     outputs_public_figures: outputs/public/figures
@@ -138,7 +140,8 @@ default:
   # project_ado: true installs them into ado/plus in the project folder.
   packages:
     project_ado: true
-    default_packages: []
+    default_packages:
+      - webdoc
 
   # fw_scaffold reads these, as scaffold() does in R and Python: the random
   # seed, the graph scheme (stata_scheme, with set_theme_on_scaffold: true),
