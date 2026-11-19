@@ -51,10 +51,44 @@ default:
             type: csv
             description: >-
               New names for the HSLS:09 variables the series uses, with labels,
-              recodes, value labels, and two kinds of reserve codes: nonresponse
-              (missing) and logical skips (skip). Flags record which kind each
-              missing value is. docs/missing-data.md explains the codes. The R,
-              Python, and Stata projects keep identical copies.
+              recodes, value labels, and two groups of reserve codes: nonresponse
+              (missing) and logical skips (skip). Flags mark the logical skips
+              that matter in this series. docs/missing-data.md explains the codes.
+              The R, Python, and Stata projects keep identical copies.
+          hsls_doc_base_year:
+            path: inputs/public/raw/hsls_docs/2011328_1.pdf
+            locked: true
+            description: >-
+              HSLS:09 Base-Year Data File Documentation (NCES 2011-328), volume
+              1: design, reserve codes, imputation, and composite variables
+              (appendix F), including SES (appendix J). Downloaded from
+              https://nces.ed.gov/surveys/hsls09/pdf/2011328_1.pdf. SHA-256
+              888a17c972d8d38350f6084be06fce251666cca9ecba22f2af1359400e8faca9.
+          hsls_codebook_base_year:
+            path: inputs/public/raw/hsls_docs/2011328_2.pdf
+            locked: true
+            description: >-
+              HSLS:09 base-year codebooks (NCES 2011-328, appendix K): every
+              base-year variable with its values and frequencies. Downloaded
+              from https://nces.ed.gov/surveys/hsls09/pdf/2011328_2.pdf. SHA-256
+              9ad7520cca392a38d392ec29c486c4f1e16f30e8e122bbe02b8c64bf9775cf22.
+          hsls_codebook_first_follow_up:
+            path: inputs/public/raw/hsls_docs/2014361_AppendixI.pdf
+            locked: true
+            description: >-
+              HSLS:09 base-year to first follow-up codebooks (NCES 2014-361,
+              appendix I), student and school. Downloaded from
+              https://nces.ed.gov/pubs2014/2014361_AppendixI.pdf. SHA-256
+              7d5588edb241faa3dc3b15d83bee9de3196bb6b5fc7f4ef6e686560f5702c286.
+          hsls_doc_second_follow_up:
+            path: inputs/public/raw/hsls_docs/2018140.pdf
+            locked: true
+            description: >-
+              HSLS:09 Base-Year to Second Follow-Up Data File Documentation
+              (NCES 2018-140). Table 38 lists the reserve codes in the 2016
+              file. Downloaded from https://nces.ed.gov/pubs2018/2018140.pdf.
+              SHA-256
+              d5a9bef3822b76a964bf5b1ddd095bfbbbea4eb87330a88eb1b050951f6e837b.
       private:
         raw:
           hsls_zip:
@@ -73,8 +107,9 @@ default:
             locked: true
             description: >-
               HSLS:09 student file, extracted from hsls_zip. One row per
-              student (23,503), 8,509 variables. Missing values are negative
-              codes (-9, -8, -7, ...), not blanks.
+              student (23,503), 8,509 variables. Missing values are reserve
+              codes, not blanks: mostly negative (-9, -8, -7, ...), with a few
+              positive ones such as 98 and 99 on parent occupation.
           hsls_school:
             path: inputs/private/raw/hsls/hsls_09_school_v1_0.csv
             type: csv

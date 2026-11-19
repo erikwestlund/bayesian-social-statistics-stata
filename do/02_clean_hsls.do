@@ -14,8 +14,9 @@
 *            drop these cases.
 * Both become missing values, so a flag keeps the difference. A row with
 * derive = "applies" builds a 0/1 flag from its source: 0 for a logical skip,
-* 1 for an answer, missing for nonresponse. A row with within = <flag> is
-* missing wherever that flag is not 1.
+* 1 for an answer, missing for nonresponse. A row with fill = <name>=<value>
+* takes that value wherever it is still missing and the named variable is
+* observed. A row with within = <flag> is missing wherever that flag is not 1.
 *
 * Only the listed codes become missing. Several variables, such as the SES
 * composite, have real negative values, so "negative means missing" would
@@ -32,7 +33,7 @@ local rows = _N
 local sources
 local names
 forvalues i = 1/`rows' {
-    foreach column in name nces label missing skip derive within recode labels {
+    foreach column in name nces label missing skip derive within fill recode labels {
         local `column'`i' `"`=`column'[`i']'"'
     }
     local sources : list sources | nces`i'
@@ -49,7 +50,8 @@ forvalues i = 1/`rows' {
 
     * Mark nonresponse and logical skips
     tempvar missing skipped
-    quietly generate byte `missing' = 0
+    * A blank cell is missing too, so a flag never reads it as an answer
+    quietly generate byte `missing' = missing(`source')
     quietly generate byte `skipped' = 0
     local codes : subinstr local missing`i' ";" " ", all
     foreach code of local codes {
@@ -69,6 +71,11 @@ forvalues i = 1/`rows' {
             local rules : subinstr local recode`i' ";" ") (", all
             quietly recode `name' (`rules')
         }
+    }
+    if "`fill`i''" != "" {
+        gettoken other value : fill`i', parse("=")
+        gettoken equals value : value, parse("=")
+        quietly replace `name' = `value' if missing(`name') & !missing(`other')
     }
     if "`within`i''" != "" {
         quietly replace `name' = . if `within`i'' != 1
