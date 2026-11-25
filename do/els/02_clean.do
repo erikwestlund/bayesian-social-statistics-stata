@@ -4,11 +4,11 @@
 *   do settings.do
 *   do do/els/02_clean.do
 *
-* inputs/public/raw/els_crosswalk.csv drives every step: which NCES
+* shared/data_spec/els.csv drives every step: which NCES
 * variables to keep, missing-value codes, recodes, new names, and labels.
-* The names follow the HSLS:09 crosswalk, so code written for one study reads
-* the other. The R and Python projects keep the same crosswalk, so all three
-* build the same file.
+* The names follow the HSLS:09 data spec, so code written for one study reads
+* the other. The R, Python, and Stata projects all read it, so all three build
+* the same file.
 *
 * A row's missing codes are nonresponse; its skip codes mark a survey
 * component that did not apply. Both become missing values. A row with fill =
@@ -21,8 +21,8 @@
 clear all
 set maxvar 10000
 
-* Read the crosswalk into locals, one set per row
-fw_use inputs.public.raw.els_crosswalk, clear options(stringcols(_all) case(preserve))
+* Read the data spec into locals, one set per row
+fw_use inputs.public.raw.els_data_spec, clear options(stringcols(_all) case(preserve))
 local rows = _N
 local sources SCH_ID
 local names
@@ -35,7 +35,7 @@ forvalues i = 1/`rows' {
 }
 local duplicates : list dups names
 if "`duplicates'" != "" {
-    display as error "The crosswalk names `duplicates' more than once."
+    display as error "The data spec names `duplicates' more than once."
     exit 459
 }
 
@@ -98,9 +98,9 @@ forvalues i = 1/`rows' {
     }
 }
 
-* Every reserve code the crosswalk does not list would pass through as a
+* Every reserve code the data spec does not list would pass through as a
 * value. These variables have no real negative values, so any left is a code
-* the crosswalk missed.
+* the data spec missed.
 local real_negatives student_id w1_ses w1_ses_duncan w4_ses
 local nonnegative : list names - real_negatives
 local leftover
@@ -144,17 +144,16 @@ tempfile clean
 quietly save `clean'
 
 * The separate NCES replicate file uses the same student key as the CSV.
-fw_use inputs.private.raw.els_brr, clear
+fw_use inputs.private.raw.els_brr, clear options(case(preserve) stringcols(1) asdouble)
 keep STU_ID BYSTU1-BYSTU200 F1PNL1-F1PNL200
 assert !missing(STU_ID)
-generate student_id = string(STU_ID, "%12.0f")
+rename STU_ID student_id
 isid student_id
 foreach weight of varlist BYSTU1-BYSTU200 F1PNL1-F1PNL200 {
     assert !missing(`weight') & `weight' >= 0
 }
 rename (BYSTU#) (w1_weight_rep#)
 rename (F1PNL#) (w2_weight_panel_rep#)
-drop STU_ID
 merge 1:1 student_id using `clean', assert(match) nogenerate
 
 sort row

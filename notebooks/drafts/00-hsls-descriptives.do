@@ -35,8 +35,8 @@ univariate distributions for continuous and categorical variables,
 missing-value classifications, joint missingness patterns, covariate
 differences between observed and missing cases, pairwise correlations, and
 variance across socioeconomic status (SES) imputations. Value labels and NCES
-reserve codes are documented in <code>docs/codebook.md</code>, and missing-data
-coding rules are documented in <code>docs/missing-data.md</code>.</p>
+reserve codes are documented in <code>shared/docs/codebook.md</code>, and missing-data
+coding rules are documented in <code>shared/docs/missing-data.md</code>.</p>
 
 <p>All student counts are unweighted record counts in <code>hsls_clean</code>.
 Sample-level shares use all records in <code>hsls_clean</code> as the
@@ -54,10 +54,10 @@ The helper programs are in <code>functions/</code>.</p>
 ***/
 
 webdoc stlog
-* The crosswalk gives each variable's source, type, wave, and codes
-fw_use inputs.public.raw.hsls_crosswalk, clear options(stringcols(_all) case(preserve))
-tempfile crosswalk
-quietly save `crosswalk'
+* The data spec gives each variable's source, type, wave, and codes
+fw_use inputs.public.raw.hsls_data_spec, clear options(stringcols(_all) case(preserve))
+tempfile data spec
+quietly save `data spec'
 local rows = _N
 local names
 local sources
@@ -71,7 +71,7 @@ forvalues i = 1/`rows' {
 }
 local sources : list uniq sources
 
-* Raw values give the reasons for missing values. Keep the crosswalk's variables.
+* Raw values give the reasons for missing values. Keep the data spec's variables.
 fw_use inputs.private.raw.hsls_student, clear options(case(preserve) stringcols(1))
 keep `sources'
 tempfile raw
@@ -84,7 +84,7 @@ local variables = c(k)
 * Missing-value reasons compare raw and clean values row by row
 merge 1:1 _n using `raw', assert(match) nogenerate
 assert STU_ID == student_id
-hsls_missing_reasons using `crosswalk'
+hsls_missing_reasons using `data spec'
 drop `sources'
 display as result strtrim(string(_N, "%9.0fc")) " students, `variables' variables"
 webdoc stlog close
@@ -94,10 +94,10 @@ webdoc stlog close
 
 <p>The table below lists every column in <code>hsls_clean</code>. Variable
 labels, survey waves, and measurement types come from
-<code>hsls_crosswalk</code>, while <code>Data type</code> reports the storage
+<code>hsls_data_spec</code>, while <code>Data type</code> reports the storage
 type in <code>hsls_clean</code>: <code>student_id</code> is stored as a string
 and all other variables are numeric, with binary, categorical, and ordinal
-variables stored as integer codes mapped to labels in the crosswalk.
+variables stored as integer codes mapped to labels in the data spec.
 <code>Distinct observed</code> and <code>Observed</code> count non-missing
 records only; <code>Missing (% of sample)</code> is the unweighted percentage
 of all students in <code>hsls_clean</code> with a missing value on that
@@ -221,7 +221,7 @@ restore
 /***
 <h2>Continuous variable distributions</h2>
 
-<p>For each continuous variable in <code>hsls_crosswalk</code>, unweighted
+<p>For each continuous variable in <code>hsls_data_spec</code>, unweighted
 summary statistics (<code>Unweighted mean</code>, <code>Unweighted SD</code>,
 extrema, and percentiles) are computed over all students with a non-missing
 value on that variable (<code>Observed</code>), where <code>Unweighted
@@ -307,7 +307,7 @@ webdoc graph, name(Graph) alt("Histograms of the two math scores, math self-effi
 <h2>Categorical variable frequencies</h2>
 
 <p>The frequency table summarizes all binary, categorical, and ordinal
-variables in <code>hsls_crosswalk</code> other than the survey response
+variables in <code>hsls_data_spec</code> other than the survey response
 indicators tabulated above. For each variable, <code>Students</code> and
 <code>Unweighted (%)</code> are computed over all students with a non-missing
 value on that variable. <code>Weighted (%)</code> is the category's
@@ -370,7 +370,7 @@ foreach name of local categorical {
 }
 preserve
 use `frequencies', clear
-* Appending puts the last variable first, so sort back to the crosswalk order
+* Appending puts the last variable first, so sort back to the data spec order
 generate order = .
 local i 0
 foreach name of local categorical {

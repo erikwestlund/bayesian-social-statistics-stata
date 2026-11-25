@@ -349,7 +349,7 @@ scores beyond what base-year math and SES predict, the replications will miss
 their means. The check compares each group's observed mean follow-up score with
 the replicated means for the same students. Missing race is its own group. The
 group names are the value labels of <code>w1_race</code>, from the
-crosswalk.</p>
+data spec.</p>
 ***/
 
 webdoc stlog

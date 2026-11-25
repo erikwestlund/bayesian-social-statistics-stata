@@ -1,12 +1,12 @@
 * 02_clean.do: build the analysis file from the HSLS:09 student file
 *
-* inputs/public/raw/hsls_crosswalk.csv drives every step: which NCES
+* shared/data_spec/hsls.csv drives every step: which NCES
 * variables to keep, missing-value codes, recodes, new names, and labels.
-* The R and Python projects keep the same crosswalk, so all three build the
-* same file.
+* The R, Python, and Stata projects all read it, so all three build the same
+* file.
 *
-* NCES marks missing values with negative reserve codes, and the crosswalk
-* splits them in two (see docs/missing-data.md):
+* NCES marks missing values with negative reserve codes, and the data spec
+* splits them in two (see shared/docs/missing-data.md):
 *   missing: nonresponse (-9, -8, -4, ...). The question applied but went
 *            unanswered. Analyses impute these or model them.
 *   skip:    logical skips (-7, -6). The question did not apply, such as
@@ -27,8 +27,8 @@
 clear all
 set maxvar 10000
 
-* Read the crosswalk into locals, one set per row
-fw_use inputs.public.raw.hsls_crosswalk, clear options(stringcols(_all) case(preserve))
+* Read the data spec into locals, one set per row
+fw_use inputs.public.raw.hsls_data_spec, clear options(stringcols(_all) case(preserve))
 local rows = _N
 local sources
 local names
@@ -40,7 +40,7 @@ forvalues i = 1/`rows' {
     local names `names' `name`i''
 }
 
-* Read only the crosswalk's variables from the 8,509 in the student file
+* Read only the data spec's variables from the 8,509 in the student file
 fw_use inputs.private.raw.hsls_student, clear options(case(preserve) stringcols(1))
 keep `sources'
 
