@@ -1,12 +1,12 @@
 * 03-simulating-the-data.do: notebook that simulates the regression's data
 *
 * webdoc runs this do-file and writes the text, Stata output, tables, and
-* graphs to outputs/private/notebooks/03-simulating-the-data.html. Run it
+* graphs to outputs/notebooks/03-simulating-the-data.html. Run it
 * through do/04_bayes_notebooks.do. The R and Python projects render the same
 * notebook. It compares fake students with HSLS:09 students, checks that
 * bayesmh recovers known parameters, and runs simulation-based calibration.
 
-webdoc init `"$outputs_private_notebooks/03-simulating-the-data.html"', replace ///
+webdoc init `"$outputs_notebooks/03-simulating-the-data.html"', replace ///
     header(title("Simulating the data-generating process") author("Erik") date("2026-11-18") width(60em)) ///
     logdir(03-simulating-the-data_files) ///
     grdir(03-simulating-the-data_files) ///

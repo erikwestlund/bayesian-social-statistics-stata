@@ -1,12 +1,12 @@
 * 07-posterior-summary.do: notebook that summarizes the posterior draws
 *
 * webdoc runs this do-file and writes the text, Stata output, tables, and
-* graphs to outputs/private/notebooks/07-posterior-summary.html. Run it
+* graphs to outputs/notebooks/07-posterior-summary.html. Run it
 * through do/04_bayes_notebooks.do, after 05-sampling, which saves the
 * HSLS:09 draws this notebook reads. The R and Python projects render the
 * same notebook.
 
-webdoc init `"$outputs_private_notebooks/07-posterior-summary.html"', replace ///
+webdoc init `"$outputs_notebooks/07-posterior-summary.html"', replace ///
     header(title("Posterior summaries") author("Erik") date("2026-11-18") width(60em)) ///
     logdir(07-posterior-summary_files) ///
     grdir(07-posterior-summary_files) ///
@@ -49,7 +49,7 @@ quietly save `hsls'
 local n_hsls = _N
 
 * The HSLS:09 draws and the settings they were sampled with, from 05-sampling
-use `"$outputs_private_models/hsls_regression_draws.dta"', clear
+use `"$outputs_models/hsls_regression_draws.dta"', clear
 if "`: char _dta[bayes_n]'" != "`n_hsls'" {
     display as error "The saved draws come from a different sample. Rerun 05-sampling."
     exit 459

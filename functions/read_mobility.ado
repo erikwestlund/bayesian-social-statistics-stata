@@ -9,7 +9,7 @@
 program define read_mobility
     version 14
     syntax, clear
-    fw_use inputs.private.final.els_clean, clear
+    fw_use inputs.final.els_clean, clear
     keep student_id w1_ses w4_ses
     quietly drop if missing(w1_ses, w4_ses)
     foreach pair in "w1_ses parent_ses_z" "w4_ses adult_ses_z" {

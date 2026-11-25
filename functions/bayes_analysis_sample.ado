@@ -8,7 +8,7 @@
 program define bayes_analysis_sample
     version 14
     syntax, clear
-    fw_use inputs.private.final.hsls_clean_stata, clear
+    fw_use inputs.final.hsls_clean_stata, clear
     quietly keep if !missing(w1_math, w2_math, w1_ses)
     generate double w1_math_c = w1_math - 50
     label variable w1_math_c "Math score, base year, minus 50"

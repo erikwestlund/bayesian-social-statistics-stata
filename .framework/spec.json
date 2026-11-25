@@ -20,22 +20,16 @@
   },
   "data_hooks": {},
   "directories": {
-    "cache": "outputs/private/cache",
+    "cache": "outputs/cache",
     "do": "do",
     "docs": "docs",
-    "inputs_private_final": "inputs/private/final",
-    "inputs_private_intermediate": "inputs/private/intermediate",
-    "inputs_private_raw": "inputs/private/raw",
-    "inputs_public_final": "inputs/public/final",
-    "inputs_public_intermediate": "inputs/public/intermediate",
-    "inputs_public_raw": "inputs/public/raw",
+    "inputs_final": "inputs/final",
+    "inputs_intermediate": "inputs/intermediate",
+    "inputs_raw": "inputs/raw",
     "logs": "logs",
-    "outputs_private_figures": "outputs/private/figures",
-    "outputs_private_reports": "outputs/private/reports",
-    "outputs_private_tables": "outputs/private/tables",
-    "outputs_public_figures": "outputs/public/figures",
-    "outputs_public_reports": "outputs/public/reports",
-    "outputs_public_tables": "outputs/public/tables",
+    "outputs_figures": "outputs/figures",
+    "outputs_reports": "outputs/reports",
+    "outputs_tables": "outputs/tables",
     "scratch": "scratch"
   },
   "env": {},
@@ -56,7 +50,7 @@
     "render_dir": "outputs/public/docs"
   },
   "render_dirs": {
-    "docs": "outputs/private/docs"
+    "docs": "outputs/docs"
   },
   "scaffold": {
     "notebook_format": "script",

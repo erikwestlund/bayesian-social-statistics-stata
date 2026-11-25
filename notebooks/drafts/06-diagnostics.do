@@ -1,12 +1,12 @@
 * 06-diagnostics.do: notebook of MCMC diagnostics for bayesmh fits
 *
 * webdoc runs this do-file and writes the text, Stata output, tables, and
-* graphs to outputs/private/notebooks/06-diagnostics.html. Run it through
+* graphs to outputs/notebooks/06-diagnostics.html. Run it through
 * do/04_bayes_notebooks.do. The R and Python projects render the same
 * notebook with Stan. It checks a fit that passes, two fits built to fail,
 * and a model with one intercept per school context.
 
-webdoc init `"$outputs_private_notebooks/06-diagnostics.html"', replace ///
+webdoc init `"$outputs_notebooks/06-diagnostics.html"', replace ///
     header(title("Sampler diagnostics") author("Erik") date("2026-11-18") width(60em)) ///
     logdir(06-diagnostics_files) ///
     grdir(06-diagnostics_files) ///

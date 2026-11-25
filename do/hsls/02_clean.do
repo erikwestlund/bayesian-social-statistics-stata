@@ -28,7 +28,7 @@ clear all
 set maxvar 10000
 
 * Read the data spec into locals, one set per row
-fw_use inputs.public.raw.hsls_data_spec, clear options(stringcols(_all) case(preserve))
+fw_use inputs.raw.hsls_data_spec, clear options(stringcols(_all) case(preserve))
 local rows = _N
 local sources
 local names
@@ -41,7 +41,7 @@ forvalues i = 1/`rows' {
 }
 
 * Read only the data spec's variables from the 8,509 in the student file
-fw_use inputs.private.raw.hsls_student, clear options(case(preserve) stringcols(1))
+fw_use inputs.raw.hsls_student, clear options(case(preserve) stringcols(1))
 keep `sources'
 
 forvalues i = 1/`rows' {
@@ -101,6 +101,6 @@ keep `names'
 order `names'
 
 * CSV holds codes, as in R and Python. Labels go in the .dta file.
-fw_save inputs/private/final/hsls_clean.csv, replace options(nolabel)
-fw_save inputs/private/final/hsls_clean.dta, replace
+fw_save inputs/final/hsls_clean.csv, replace options(nolabel)
+fw_save inputs/final/hsls_clean.dta, replace
 display as text "`c(N)' students, `c(k)' variables"

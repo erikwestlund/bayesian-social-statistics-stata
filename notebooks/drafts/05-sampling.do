@@ -1,12 +1,12 @@
 * 05-sampling.do: notebook that follows the data through one bayesmh fit
 *
 * webdoc runs this do-file and writes the text, Stata output, tables, and
-* graphs to outputs/private/notebooks/05-sampling.html. Run it through
+* graphs to outputs/notebooks/05-sampling.html. Run it through
 * do/04_bayes_notebooks.do. The R and Python projects render the same
 * notebook with Stan. It saves the HSLS:09 posterior draws to
-* outputs/private/models for 07-posterior-summary and 08-posterior-predictive.
+* outputs/models for 07-posterior-summary and 08-posterior-predictive.
 
-webdoc init `"$outputs_private_notebooks/05-sampling.html"', replace ///
+webdoc init `"$outputs_notebooks/05-sampling.html"', replace ///
     header(title("Sampling the posterior") author("Erik") date("2026-11-18") width(60em)) ///
     logdir(05-sampling_files) ///
     grdir(05-sampling_files) ///
@@ -295,8 +295,8 @@ the sampler settings. <code>07-posterior-summary</code> and
 webdoc stlog
 use `hsls', clear
 describe w2_math w1_math_c w1_ses
-bayes_sample w2_math w1_math_c w1_ses, saving(`"$outputs_private_models/hsls_regression_draws.dta"') replace ///
-    rawsaving(`"$outputs_private_models/hsls_regression"')
+bayes_sample w2_math w1_math_c w1_ses, saving(`"$outputs_models/hsls_regression_draws.dta"') replace ///
+    rawsaving(`"$outputs_models/hsls_regression"')
 display as result "Sampling took " %4.1f r(seconds) " seconds"
 matrix list r(chain_stats), format(%9.3f)
 webdoc stlog close
@@ -304,11 +304,11 @@ webdoc stlog close
 webdoc stlog
 * What else a reader of the draws needs: the priors and how the predictors
 * were centered, so a later notebook can rebuild predictions on the score scale
-use `"$outputs_private_models/hsls_regression_draws.dta"', clear
+use `"$outputs_models/hsls_regression_draws.dta"', clear
 char _dta[bayes_center] "w1_math_c = w1_math - 50"
-quietly save `"$outputs_private_models/hsls_regression_draws.dta"', replace
+quietly save `"$outputs_models/hsls_regression_draws.dta"', replace
 char list _dta[]
-display as result "Saved " strtrim(string(_N, "%9.0fc")) " draws to outputs/private/models/hsls_regression_draws.dta"
+display as result "Saved " strtrim(string(_N, "%9.0fc")) " draws to outputs/models/hsls_regression_draws.dta"
 webdoc stlog close
 
 webdoc stlog

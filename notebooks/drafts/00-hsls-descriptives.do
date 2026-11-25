@@ -1,12 +1,12 @@
 * 01-hsls-descriptives.do: notebook that describes the cleaned HSLS:09 file
 *
 * webdoc runs this do-file and writes the text blocks, Stata output, tables,
-* and graphs to outputs/private/notebooks/01-hsls-descriptives.html. Run it
+* and graphs to outputs/notebooks/01-hsls-descriptives.html. Run it
 * through do/03_describe_hsls.do, which raises maxvar for the raw file first.
 * The R and Python projects render the same notebook from
 * notebooks/01-hsls-descriptives.qmd and .ipynb.
 
-webdoc init `"$outputs_private_notebooks/01-hsls-descriptives.html"', replace ///
+webdoc init `"$outputs_notebooks/01-hsls-descriptives.html"', replace ///
     header(title("HSLS:09 descriptive statistics") author("Erik") date("2026-11-18") width(60em)) ///
     logdir(01-hsls-descriptives_files) ///
     grdir(01-hsls-descriptives_files) ///
@@ -47,7 +47,7 @@ population of 9th graders in fall 2009; missing-data, covariate-balance,
 correlation, and imputation tables are unweighted.</p>
 
 <p>Because this notebook reads private data (<code>inputs.private.*</code>),
-rendered output is written to <code>outputs/private/notebooks</code> and
+rendered output is written to <code>outputs/notebooks</code> and
 reports aggregate statistics only. Stata 14 has no <code>dyndoc</code>, so
 <a href="http://repec.sowi.unibe.ch/stata/webdoc">webdoc</a> builds the page.
 The helper programs are in <code>functions/</code>.</p>
@@ -55,7 +55,7 @@ The helper programs are in <code>functions/</code>.</p>
 
 webdoc stlog
 * The data spec gives each variable's source, type, wave, and codes
-fw_use inputs.public.raw.hsls_data_spec, clear options(stringcols(_all) case(preserve))
+fw_use inputs.raw.hsls_data_spec, clear options(stringcols(_all) case(preserve))
 tempfile data spec
 quietly save `data spec'
 local rows = _N
@@ -72,13 +72,13 @@ forvalues i = 1/`rows' {
 local sources : list uniq sources
 
 * Raw values give the reasons for missing values. Keep the data spec's variables.
-fw_use inputs.private.raw.hsls_student, clear options(case(preserve) stringcols(1))
+fw_use inputs.raw.hsls_student, clear options(case(preserve) stringcols(1))
 keep `sources'
 tempfile raw
 quietly save `raw'
 
 * The clean file, with variable and value labels
-fw_use inputs.private.final.hsls_clean_stata, clear
+fw_use inputs.final.hsls_clean_stata, clear
 local variables = c(k)
 
 * Missing-value reasons compare raw and clean values row by row

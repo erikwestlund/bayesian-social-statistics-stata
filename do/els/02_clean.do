@@ -22,7 +22,7 @@ clear all
 set maxvar 10000
 
 * Read the data spec into locals, one set per row
-fw_use inputs.public.raw.els_data_spec, clear options(stringcols(_all) case(preserve))
+fw_use inputs.raw.els_data_spec, clear options(stringcols(_all) case(preserve))
 local rows = _N
 local sources SCH_ID
 local names
@@ -40,7 +40,7 @@ if "`duplicates'" != "" {
 }
 
 * Doubles keep the weights and scores at full precision
-fw_use inputs.private.raw.els_student, clear options(case(preserve) stringcols(1) asdouble)
+fw_use inputs.raw.els_student, clear options(case(preserve) stringcols(1) asdouble)
 keep `sources'
 generate long row = _n
 
@@ -144,7 +144,7 @@ tempfile clean
 quietly save `clean'
 
 * The separate NCES replicate file uses the same student key as the CSV.
-fw_use inputs.private.raw.els_brr, clear options(case(preserve) stringcols(1) asdouble)
+fw_use inputs.raw.els_brr, clear options(case(preserve) stringcols(1) asdouble)
 keep STU_ID BYSTU1-BYSTU200 F1PNL1-F1PNL200
 assert !missing(STU_ID)
 rename STU_ID student_id
@@ -161,6 +161,6 @@ drop row
 order `names' school_id w1_ses_imputed w1_weight_rep* w2_weight_panel_rep*
 
 * CSV holds codes, as in R and Python. Labels go in the .dta file.
-fw_save inputs/private/final/els_clean.csv, replace options(nolabel)
-fw_save inputs/private/final/els_clean.dta, replace
+fw_save inputs/final/els_clean.csv, replace options(nolabel)
+fw_save inputs/final/els_clean.dta, replace
 display as text "`=string(_N, "%9.0fc")' students, `c(k)' variables"

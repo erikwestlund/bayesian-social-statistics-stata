@@ -9,8 +9,8 @@
 * link it to individually identifiable data.
 *
 * shared/data_locations.csv lists every file, with its checksum and length. The
-* data go under inputs/private/raw and stay out of git. The documentation
-* goes under inputs/public/raw, which git also ignores because the PDFs are
+* data go under inputs/raw and stay out of git. The documentation
+* goes under inputs/raw, which git also ignores because the PDFs are
 * large.
 
 fetch_data els

@@ -1,11 +1,11 @@
 * 01-priors.do: notebook on choosing priors for the series regression
 *
 * webdoc runs this do-file and writes the text, Stata output, and graphs to
-* outputs/private/notebooks/01-simple-regression/01-priors.html. Run it
+* outputs/notebooks/01-simple-regression/01-priors.html. Run it
 * through do/render_notebooks.do. The R and Python projects render the same
 * notebook (notebooks/01-simple-regression/01-priors.qmd and .ipynb).
 
-webdoc init `"$outputs_private_notebooks/01-simple-regression/01-priors.html"', replace ///
+webdoc init `"$outputs_notebooks/01-simple-regression/01-priors.html"', replace ///
     header(title("Priors") author("Erik") date("2026-11-22") width(60em)) ///
     logdir(01-priors_files) ///
     grdir(01-priors_files) ///
