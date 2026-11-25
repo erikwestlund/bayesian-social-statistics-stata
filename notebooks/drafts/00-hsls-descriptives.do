@@ -7,7 +7,7 @@
 * notebooks/01-hsls-descriptives.qmd and .ipynb.
 
 webdoc init `"$outputs_private_notebooks/01-hsls-descriptives.html"', replace ///
-    header(title("HSLS:09 descriptives") author("Erik") date("2026-11-18") width(60em)) ///
+    header(title("HSLS:09 descriptive statistics") author("Erik") date("2026-11-18") width(60em)) ///
     logdir(01-hsls-descriptives_files) ///
     grdir(01-hsls-descriptives_files) ///
     linesize(100) nokeep gropts(as(svg) hardcode)
@@ -24,23 +24,31 @@ td.num { text-align: right; font-variant-numeric: tabular-nums; }
 figure { margin: 0 0 1.2em; }
 </style>
 
-<h1>HSLS:09 descriptives</h1>
+<h1>HSLS:09 descriptive statistics</h1>
 
 <p>Erik, 2026-11-18</p>
 
-<p>This notebook describes the cleaned HSLS:09 file before any model uses it:
-each variable's type, summary statistics, and distribution, then its missing
-values, why they are missing, and how they occur together.
-<code>docs/codebook.md</code> lists every value and reserve code.
-<code>docs/missing-data.md</code> explains the codes.</p>
+<p>This notebook reports descriptive statistics and missing-data diagnostics for
+the cleaned HSLS:09 student file (<code>hsls_clean</code>): variable storage
+types and missingness rates, survey response counts and analytic weights,
+univariate distributions for continuous and categorical variables,
+missing-value classifications, joint missingness patterns, covariate
+differences between observed and missing cases, pairwise correlations, and
+variance across socioeconomic status (SES) imputations. Value labels and NCES
+reserve codes are documented in <code>docs/codebook.md</code>, and missing-data
+coding rules are documented in <code>docs/missing-data.md</code>.</p>
 
-<p>Counts are unweighted. Means and percentages are given both unweighted, over
-the students in the file, and weighted to the population of 9th graders in
-fall 2009.</p>
+<p>All student counts are unweighted record counts in <code>hsls_clean</code>.
+Sample-level shares use all records in <code>hsls_clean</code> as the
+denominator, whereas univariate summary statistics use records with
+non-missing values on each variable. Univariate continuous and categorical
+tables report both unweighted statistics and weighted estimates targeting the
+population of 9th graders in fall 2009; missing-data, covariate-balance,
+correlation, and imputation tables are unweighted.</p>
 
-<p>The notebook reads private data, so it renders to
-<code>outputs/private/notebooks</code>. It shows summaries only, never
-individual records. Stata 14 has no <code>dyndoc</code>, so
+<p>Because this notebook reads private data (<code>inputs.private.*</code>),
+rendered output is written to <code>outputs/private/notebooks</code> and
+reports aggregate statistics only. Stata 14 has no <code>dyndoc</code>, so
 <a href="http://repec.sowi.unibe.ch/stata/webdoc">webdoc</a> builds the page.
 The helper programs are in <code>functions/</code>.</p>
 ***/
@@ -82,11 +90,18 @@ display as result strtrim(string(_N, "%9.0fc")) " students, `variables' variable
 webdoc stlog close
 
 /***
-<h2>Variables</h2>
+<h2>Variable overview</h2>
 
-<p>Each variable's type comes from the crosswalk. The stored type is how the
-file holds it: every variable except the student ID is numeric, and
-categories are codes with value labels.</p>
+<p>The table below lists every column in <code>hsls_clean</code>. Variable
+labels, survey waves, and measurement types come from
+<code>hsls_crosswalk</code>, while <code>Data type</code> reports the storage
+type in <code>hsls_clean</code>: <code>student_id</code> is stored as a string
+and all other variables are numeric, with binary, categorical, and ordinal
+variables stored as integer codes mapped to labels in the crosswalk.
+<code>Distinct observed</code> and <code>Observed</code> count non-missing
+records only; <code>Missing (% of sample)</code> is the unweighted percentage
+of all students in <code>hsls_clean</code> with a missing value on that
+variable.</p>
 ***/
 
 webdoc stlog
@@ -108,9 +123,9 @@ foreach name of local names {
 }
 postclose `post'
 use `overview', clear
-label variable Stored "Stored as"
-label variable Distinct "Distinct values"
-label variable Missing "Missing (%)"
+label variable Stored "Data type"
+label variable Distinct "Distinct observed"
+label variable Missing "Missing (% of sample)"
 format Distinct Observed %9.0fc
 format Missing %5.1f
 webdoc stlog close
@@ -118,12 +133,23 @@ html_table
 restore
 
 /***
-<h2>Sample</h2>
+<h2>Survey response and analytic weights</h2>
 
-<p>HSLS:09 sampled 23,503 9th graders in fall 2009. A weight above 0 marks a
-student who counts toward estimates with that weight: the base-year student
-weight needs a base-year student survey, the parent weight a parent survey,
-and the panel weight both student surveys.</p>
+<p>HSLS:09 sampled 23,503 9th graders in fall 2009. A weight above 0
+identifies a student included in weighted estimates under that weight: the
+base-year student weight (<code>w1_weight</code>) requires a base-year student
+survey, the parent weight (<code>w1_weight_parent</code>) requires a parent
+survey, and the longitudinal panel weight (<code>w2_weight_panel</code>)
+requires both the base-year student survey and the first follow-up student
+survey.</p>
+
+<p>The first table reports unweighted student counts and unweighted
+percentages of all records in <code>hsls_clean</code> with each response
+indicator equal to 1 and each analytic weight above 0. The cross-tabulation
+then gives unweighted student counts jointly by base-year student survey
+status (<code>w1_responded</code>) and first follow-up student survey status
+(<code>w2_responded</code>), coding missing values on
+<code>w2_responded</code> as <code>Response status unknown</code>.</p>
 ***/
 
 webdoc stlog
@@ -145,7 +171,7 @@ local students = _N
 use `sample', clear
 generate double Share = 100 * Students / `students'
 label variable Students_in " "
-label variable Share "Share (%)"
+label variable Share "Share of sample (%)"
 format Students %9.0fc
 format Share %5.1f
 webdoc stlog close
@@ -153,23 +179,60 @@ html_table
 restore
 
 webdoc stlog
-* Who answered which survey. Missing means the response status itself is unknown.
+* Unweighted student counts by base-year and first follow-up student survey status
 preserve
-generate str w1_survey = cond(w1_responded == 1, "Base-year survey", "No base-year survey") ///
+generate str w1_survey = cond(w1_responded == 1, "Base-year student survey", "No base-year student survey") ///
     if !missing(w1_responded)
-generate str w2_survey = cond(w2_responded == 1, "Follow-up survey", "No follow-up survey")
-replace w2_survey = "Status unknown" if missing(w2_responded)
-tabulate w1_survey w2_survey
-restore
+generate str w2_survey = cond(w2_responded == 1, "First follow-up student survey", "No first follow-up student survey")
+replace w2_survey = "Response status unknown" if missing(w2_responded)
+* tabulate cuts long values to a few characters, so post the counts to an HTML
+* table with the same rows, columns, and totals
+quietly levelsof w1_survey, local(rows)
+quietly levelsof w2_survey, local(levels)
+local columns
+local c 0
+foreach level of local levels {
+    local columns `columns' c`++c'
+    local header_c`c' `"`level'"'
+}
+tempfile responses
+postfile `post' str32 Survey double(`columns' Total) using `responses'
+foreach row in `rows' Total {
+    local in_row = cond("`row'" == "Total", `"w1_survey != """', `"w1_survey == "`row'""')
+    local counts
+    foreach level of local levels {
+        quietly count if `in_row' & w2_survey == "`level'"
+        local counts `counts' (`=r(N)')
+    }
+    quietly count if `in_row'
+    post `post' ("`row'") `counts' (`=r(N)')
+}
+postclose `post'
+use `responses', clear
+label variable Survey " "
+foreach c of local columns {
+    label variable `c' "`header_`c''"
+}
+format `columns' Total %9.0fc
 webdoc stlog close
+html_table
+restore
 
 /***
-<h2>Continuous variables</h2>
+<h2>Continuous variable distributions</h2>
 
-<p>The weighted columns use the weight that matches the variable's source:
-the base-year student weight for base-year variables, and the panel weight
-for the first follow-up math score. Weighted SDs are population SDs.
-Quantiles interpolate linearly between the sorted values, as R and pandas do
+<p>For each continuous variable in <code>hsls_crosswalk</code>, unweighted
+summary statistics (<code>Unweighted mean</code>, <code>Unweighted SD</code>,
+extrema, and percentiles) are computed over all students with a non-missing
+value on that variable (<code>Observed</code>), where <code>Unweighted
+SD</code> is the sample standard deviation. <code>Weighted mean</code> and
+<code>Weighted SD</code> are computed over students with both a non-missing
+value and a positive analytic weight, using the base-year student weight
+(<code>w1_weight</code>) for base-year variables and the longitudinal panel
+weight (<code>w2_weight_panel</code>) for the first follow-up math score
+(<code>w2_math</code>). Weighted SDs are population standard deviations
+(dividing by the sum of weights without sample degrees-of-freedom
+adjustment). Quantiles interpolate linearly between the sorted values, as R and pandas do
 by default.</p>
 ***/
 
@@ -201,6 +264,8 @@ postclose `post'
 use `summaries', clear
 format Observed %9.0fc
 format Mean-Max Weighted_mean Weighted_SD %9.2f
+label variable Mean "Unweighted mean"
+label variable SD "Unweighted SD"
 label variable p5 "5%"
 label variable p25 "25%"
 label variable p75 "75%"
@@ -212,9 +277,15 @@ html_table
 restore
 
 /***
-<p>The math scores are T-scores, scaled by NCES to a weighted mean of 50 and
-SD of 10 in each wave. SES and math self-efficacy are standardized
-composites, so their negative values are real values, not reserve codes.</p>
+<p>Base-year math (<code>w1_math</code>) and first follow-up math
+(<code>w2_math</code>) are norm-referenced T-scores scaled by NCES to a
+weighted mean of 50 and a standard deviation of 10 in each wave.
+Socioeconomic status (<code>w1_ses</code>) and math self-efficacy
+(<code>w1_math_efficacy</code>) are standardized continuous composites;
+negative values represent substantive scores below the reference mean rather
+than NCES reserve codes. The histograms below plot unweighted student counts
+over non-missing observations for <code>w1_math</code>, <code>w2_math</code>,
+<code>w1_math_efficacy</code>, and <code>w1_ses</code>.</p>
 ***/
 
 webdoc stlog
@@ -225,23 +296,31 @@ foreach name of local shown {
     histogram `name', bin(40) frequency name(`name', replace) nodraw ///
         fcolor("1 115 178") lcolor(white) lwidth(vthin) ///
         title(`"`: variable label `name'' (n = `n')"', size(medium)) ///
-        xtitle("") ytitle("Students") ylabel(, angle(horizontal) format(%9.0fc) labsize(small))
+        xtitle("") ytitle("Students (unweighted)") ylabel(, angle(horizontal) format(%9.0fc) labsize(small))
 }
 graph combine `shown', cols(2) xsize(9) ysize(6.5) ///
-    title("Distributions of the continuous variables, observed values", size(medium))
+    title("Unweighted distributions of observed continuous analysis variables", size(medium))
 webdoc stlog close
 webdoc graph, name(Graph) alt("Histograms of the two math scores, math self-efficacy, and SES")
 
 /***
-<h2>Categorical variables</h2>
+<h2>Categorical variable frequencies</h2>
 
-<p>Percentages are of the students with an observed value. The weighted
-percentages use the base-year student weight, or the parent weight for
-variables from the parent survey.</p>
+<p>The frequency table summarizes all binary, categorical, and ordinal
+variables in <code>hsls_crosswalk</code> other than the survey response
+indicators tabulated above. For each variable, <code>Students</code> and
+<code>Unweighted (%)</code> are computed over all students with a non-missing
+value on that variable. <code>Weighted (%)</code> is the category's
+percentage of total positive weight among students with both a non-missing
+value and a positive weight, using the parent weight
+(<code>w1_weight_parent</code>) for variables from the parent survey
+(identified by NCES names beginning with <code>X1PAR</code>,
+<code>X1P2</code>, or <code>X1FAM</code>) and the base-year student weight
+(<code>w1_weight</code>) for all remaining variables.</p>
 ***/
 
 webdoc stlog
-* The response flags are in the sample table above
+* Survey response flags are reported in the sample table above
 local categorical
 local parent_items
 foreach name of local names {
@@ -303,7 +382,8 @@ format Value %9.0f
 format Students %9.0fc
 format Percent Weighted_percent %5.1f
 label variable Students "Students"
-label variable Weighted_percent "Weighted percent"
+label variable Percent "Unweighted (%)"
+label variable Weighted_percent "Weighted (%)"
 webdoc stlog close
 html_table
 restore
@@ -311,17 +391,28 @@ restore
 /***
 <h2>Missing values by reason</h2>
 
-<p>Each missing value has one of three reasons, from the raw NCES codes:</p>
+<p>Comparing each variable in <code>hsls_clean</code> row by row against its
+raw NCES source in <code>hsls_student</code> classifies every missing value
+into one of three reasons:</p>
 
 <ul>
-<li><strong>Nonresponse</strong>: the question applied and went unanswered.
-An analysis imputes these or models them.</li>
-<li><strong>Logical skip</strong>: the question did not apply. An analysis of
-that variable usually drops these students.</li>
-<li><strong>Outside the flag</strong>: the raw file has an answer, but the
-variable applies only where a flag is 1, such as parent 2's employment where
-there is no second parent.</li>
+<li><strong>Nonresponse</strong>: the survey or item applied to the student,
+but no response was recorded. These values are unobserved within the target
+subpopulation.</li>
+<li><strong>Logical skip</strong>: the item did not apply to the student under
+survey routing rules, placing the student outside the subpopulation for which
+the variable is defined.</li>
+<li><strong>Outside the flag</strong>: the raw file records an answer, but
+<code>hsls_clean</code> sets the variable to missing unless an applicability
+flag equals 1, such as parent 2's employment where there is no second
+parent.</li>
 </ul>
+
+<p>The table reports unweighted student counts across all records in
+<code>hsls_clean</code> for <code>Observed</code> and each missing-value
+reason. For variables with any missing values, the bar chart plots each
+reason as an unweighted percentage of all students in <code>hsls_clean</code>,
+ordered by the nonresponse percentage.</p>
 ***/
 
 webdoc stlog
@@ -353,20 +444,27 @@ keep if Nonresponse + Skip + Outside > 0
 graph hbar (asis) share_Nonresponse share_Skip share_Outside, ///
     over(Variable, sort(share_Nonresponse) descending label(labsize(vsmall))) ///
     stack bar(1, color("1 115 178")) bar(2, color("222 143 5")) bar(3, color("2 158 115")) ///
-    legend(order(1 "Nonresponse" 2 "Logical skip" 3 "Outside the flag") rows(1) size(small) symxsize(*0.4) colgap(*4)) ///
-    ytitle("Students (%)") xsize(8) ysize(7) graphregion(margin(l+12 r+4)) ///
-    title("Missing values by reason, variables with any missing", size(medium))
+    legend(order(1 "Nonresponse" 2 "Logical skip" 3 "Outside the flag") rows(1) size(small) symxsize(*0.4) colgap(*4) ///
+    title("Reason", size(small))) ///
+    ytitle("Share of sample (%, unweighted)") xsize(8) ysize(7) graphregion(margin(l+12 r+4)) ///
+    title("Missing values by reason among variables with missing data", size(medium))
 webdoc stlog close
 webdoc graph, alt("Stacked bars of the percent of students missing each variable, by reason")
 restore
 
 /***
-<h2>Missingness patterns</h2>
+<h2>Joint missingness patterns</h2>
 
-<p>The patterns below use the variables a first model is likely to use: the
-two math scores, SES, math self-efficacy, sex, race, parents' education, and
-family income. Each row is a combination of observed (<code>·</code>) and
-missing (<code>X</code>) values, counting a missing value for any reason.</p>
+<p>Joint missingness is tabulated across the core analysis variables: the two
+math scores (<code>w1_math</code>, <code>w2_math</code>), SES
+(<code>w1_ses</code>), math self-efficacy (<code>w1_math_efficacy</code>), sex
+(<code>w1_female</code>), race/ethnicity (<code>w1_race</code>), parents'
+education (<code>w1_parents_edu</code>), and family income
+(<code>w1_family_income</code>). Each row represents a combination of
+observed (<code>·</code>) and missing (<code>X</code>) indicators, pooling all
+missing-value reasons. <code>Students</code> is the unweighted count and
+<code>Share of sample (%)</code> is the unweighted percentage of all records
+in <code>hsls_clean</code>.</p>
 ***/
 
 webdoc stlog
@@ -394,6 +492,7 @@ quietly keep in 1/`=min(15, _N)'
 format Students %9.0fc
 format Percent %5.1f
 label variable Students "Students"
+label variable Percent "Share of sample (%)"
 label variable Missing_variables "Missing variables"
 webdoc stlog close
 html_table m_*_ Students Percent Missing_variables
@@ -403,17 +502,26 @@ webdoc stlog
 egen missing_count = rowtotal(`missing')
 quietly count if missing_count == 0
 display as result strtrim(string(r(N), "%9.0fc")) " students (" %3.1f 100 * r(N) / _N ///
-    "%) have all `: word count `analysis'' variables."
-display as result "`patterns' distinct patterns. The 15 above cover " ///
-    %3.1f 100 * `top' / _N "% of students."
+    "%, unweighted) have observed values on all `: word count `analysis'' analysis variables."
+display as result "There are `patterns' distinct missingness patterns; the 15 most frequent patterns cover " ///
+    %3.1f 100 * `top' / _N "% of all students."
 drop missing_count
 webdoc stlog close
 
 /***
-<p>Missing values cluster by survey. A student without a base-year survey
-misses the base-year score, SES, and self-efficacy together. A parent who did
-not respond leaves parents' education and income missing. The next table
-gives the share missing on each variable within each response group.</p>
+<p>Missing values cluster by survey instrument: a student without a base-year
+student survey misses the base-year math score, SES, and math self-efficacy
+together, and nonresponse on the parent survey leaves parents' education and
+family income missing.</p>
+
+<p>The table below partitions <code>hsls_clean</code> by each survey response
+indicator (<code>w1_responded</code>, <code>w1_parent_responded</code>,
+<code>w2_responded</code>) and reports the unweighted percentage of students
+in each response group (<code>No</code>, <code>Yes</code>, and
+<code>Unknown</code> where the indicator itself is missing) who are missing
+each analysis variable. The heatmap then shows, among students missing the
+row variable, the unweighted percentage who are also missing the column
+variable.</p>
 ***/
 
 webdoc stlog
@@ -465,7 +573,7 @@ html_table Variable `columns'
 restore
 
 webdoc stlog
-* Of students missing the row variable, the share also missing the column variable
+* Unweighted conditional percentage missing the column variable given the row variable is missing
 preserve
 tempfile both
 postfile `post' row column double Share using `both'
@@ -511,24 +619,38 @@ twoway `plots' ///
     (scatter row column if step >= 6, msymbol(none) mlabel(text) mlabposition(0) mlabcolor(black)) ///
     (scatter row column if step < 6, msymbol(none) mlabel(text) mlabposition(0) mlabcolor(white)), ///
     yscale(reverse) ylabel(`ticks', angle(0) nogrid labsize(vsmall)) ///
-    xlabel(`ticks', angle(45) labsize(vsmall)) ytitle("Missing", margin(r+16)) xtitle("Also missing") ///
+    xlabel(`ticks', angle(45) labsize(vsmall)) ytitle("Row variable missing", margin(r+16)) xtitle("Column variable also missing") ///
     graphregion(margin(l+8)) ///
-    legend(order(`legend') cols(1) position(3) title("Percent", size(small)) size(small)) ///
+    legend(order(`legend') cols(1) position(3) title("Conditional missing (%)", size(small)) size(small)) ///
     xsize(7.5) ysize(6) plotregion(margin(zero)) ///
-    title("Share missing the column variable, among students missing the row variable", size(small))
+    title("Unweighted share missing column variable among students missing row variable", size(small))
 webdoc stlog close
 webdoc graph, alt("Heat map of the percent of students missing one variable who also miss another")
 restore
 
 /***
-<h2>Missingness and observed values</h2>
+<h2>Covariate differences between observed and missing cases</h2>
 
-<p>If the students missing a value differ on what is observed, a
-complete-case analysis describes a different group than the sample. The table
-compares students with and without each outcome on base-year values that are
-observed for both groups. The standardized difference is the difference in
-means divided by the pooled SD. Values beyond about 0.1 are usually read as a
-meaningful imbalance.</p>
+<p>When students with missing data differ systematically on observed
+variables, complete-case estimation does not represent the full sample. The
+tables below partition students by whether the first follow-up math score
+(<code>w2_math</code>) or parents' education (<code>w1_parents_edu</code>) is
+observed versus missing, and compare both groups on selected base-year
+covariates. Within each group, unweighted means and unweighted sample
+variances are computed over that group's non-missing values on the covariate
+(<code>n (missing group, covariate observed)</code> gives the non-missing
+covariate count in the group missing the target variable). The standardized
+difference equals the unweighted mean in the missing group minus the
+unweighted mean in the observed group, divided by the unweighted pooled
+sample standard deviation,
+<code>sqrt((var_observed + var_missing) / 2)</code>. Absolute standardized
+differences exceeding roughly 0.1 indicate substantive covariate
+imbalance.</p>
+
+<p>The density plot displays unweighted kernel density estimates of observed
+base-year math scores (<code>w1_math</code>) separately for students with
+observed and missing first follow-up math scores (<code>w2_math</code>),
+normalized independently within each group.</p>
 ***/
 
 webdoc stlog
@@ -551,10 +673,10 @@ program define compare
     use `"`saving'"', clear
     format Observed Missing Difference %9.2f
     format N %9.0fc
-    label variable Observed "Mean, `varlist' observed"
-    label variable Missing "Mean, `varlist' missing"
+    label variable Observed "Mean (`varlist' observed)"
+    label variable Missing "Mean (`varlist' missing)"
     label variable Difference "Standardized difference"
-    label variable N "n missing with a value"
+    label variable N "n (missing group, covariate observed)"
     quietly save `"`saving'"', replace
     restore
 end
@@ -583,17 +705,26 @@ foreach group in 0 1 {
         lcolor("`color'") lwidth(medthick) lpattern(`=cond(`group', "dash", "solid")'))
 }
 twoway `plots', xsize(7) ysize(4) ///
-    legend(order(1 "Follow-up score observed" 2 "Follow-up score missing") rows(1)) ///
+    legend(order(1 "First follow-up math observed" 2 "First follow-up math missing") rows(1)) ///
     xtitle("`: variable label w1_math'") ytitle("Density") ylabel(, angle(horizontal) format(%4.2f)) ///
-    title("Base-year math score by whether the follow-up score is observed", size(medium))
+    title("Unweighted base-year math density by first follow-up math availability", size(medium))
 webdoc stlog close
 webdoc graph, alt("Density curves of the base-year math score for students with and without a follow-up score")
 
 /***
-<h2>Relationships</h2>
+<h2>Pairwise associations among analysis variables</h2>
 
-<p>Correlations use all students with both values, so each pair can rest on a
-different group. The table after the matrix gives each pair's count.</p>
+<p>The correlation matrix reports unweighted Pearson correlation coefficients
+across the continuous and ordinal analysis variables (<code>w1_math</code>,
+<code>w2_math</code>, <code>w1_math_efficacy</code>, <code>w1_ses</code>,
+<code>w1_parents_edu</code>, and <code>w1_family_income</code>). Each entry is
+computed via pairwise deletion over all students with non-missing values on
+both variables in the pair, so sample composition varies across cells; the
+accompanying count matrix gives the unweighted pairwise non-missing student
+counts (with univariate non-missing counts on the diagonal). The
+two-dimensional binned plot displays unweighted student counts across the
+joint distribution of base-year and first follow-up math scores among
+students with both scores observed.</p>
 ***/
 
 webdoc stlog
@@ -668,27 +799,33 @@ forvalues s = 0/9 {
 twoway `plots', xsize(6) ysize(5.5) ///
     xtitle("`xtitle'") ytitle("`ytitle'") ylabel(, angle(horizontal)) ///
     legend(order(`legend') cols(1) position(3) title("Students", size(small)) size(small)) ///
-    title("Math scores in the two waves (n = `n')", size(medium))
+    title("Base-year and first follow-up math scores (n = `n', unweighted)", size(medium))
 restore
 webdoc stlog close
 webdoc graph, alt("Binned scatter plot of the follow-up math score against the base-year math score")
 
 /***
-<h2>SES imputations</h2>
+<h2>Socioeconomic status imputations</h2>
 
-<p>For a student whose parent did not respond, <code>w1_ses</code> is the mean
-of five imputations. The five spread around that mean, and averaging them
-removes the spread. The table shows, by imputation status, the SD across the
-five imputations within a student, averaged over students, and the SD of
-<code>w1_ses</code> and of the first imputation.</p>
+<p>For a student with nonresponse on the parent survey, <code>w1_ses</code> is
+the arithmetic mean of five NCES imputations (<code>w1_ses_imp1</code> through
+<code>w1_ses_imp5</code>). Averaging the five draws eliminates within-student
+imputation variance and attenuates between-student dispersion relative to any
+single draw. Grouped by <code>w1_ses_imputed</code> over students with
+non-missing SES records, the table reports unweighted student counts, the
+student-level sample SD across the five imputations averaged over students in
+the group, the maximum absolute discrepancy between <code>w1_ses</code> and
+the five-imputation mean, and the unweighted between-student sample SDs of
+<code>w1_ses</code> and of the first imputation
+(<code>w1_ses_imp1</code>).</p>
 ***/
 
 webdoc stlog
 preserve
 keep if !missing(w1_ses_imputed)
-generate str32 Status = "0: all components reported" if w1_ses_imputed == 0
-replace Status = "1: parent did not respond" if w1_ses_imputed == 1
-replace Status = "2: some components imputed" if w1_ses_imputed == 2
+generate str32 Status = "0: All components reported" if w1_ses_imputed == 0
+replace Status = "1: Parent-survey nonresponse" if w1_ses_imputed == 1
+replace Status = "2: Partial component imputation" if w1_ses_imputed == 2
 egen double spread = rowsd(w1_ses_imp1-w1_ses_imp5)
 egen double imputation_mean = rowmean(w1_ses_imp1-w1_ses_imp5)
 generate double gap = abs(w1_ses - imputation_mean)
@@ -699,33 +836,46 @@ collapse (sum) Students (mean) spread (max) gap (sd) ses imp1, by(Status)
 format Students %9.0fc
 label variable Students "Students"
 format spread gap ses imp1 %9.3f
-label variable spread "SD across imputations, mean"
-label variable gap "Mean minus imputation mean, largest"
-label variable ses "SD of w1_ses"
-label variable imp1 "SD of imputation 1"
+label variable spread "Mean within-student imputation SD"
+label variable gap "Max |w1_ses - imputation mean|"
+label variable ses "Between-student SD of w1_ses"
+label variable imp1 "Between-student SD of imputation 1"
 webdoc stlog close
 html_table
 restore
 
 /***
-<h2>Summary</h2>
+<h2>Summary of findings</h2>
 
 <ul>
-<li><strong>Weights.</strong> The base-year math score has a weighted mean of
-50 and SD of 10, as NCES scaled it. The unweighted mean is about 51, so the
-sample leans toward higher scorers.</li>
-<li><strong>Complete cases.</strong> 56.2% of students have all eight analysis
-variables. Most of the rest miss a whole survey: the base-year student
-survey, the parent survey, or the follow-up.</li>
-<li><strong>Who is missing.</strong> Students without a follow-up math score
-scored 0.44 SD lower in the base year and had SES 0.29 SD lower than students
-with one. Students missing parents' education, nearly all because the parent
-did not respond, scored 0.44 SD lower too. A complete-case analysis drops
-lower-scoring, lower-SES students, so the models in this series need to
-address missing values rather than drop them.</li>
-<li><strong>SES.</strong> Among students whose parent did not respond,
-<code>w1_ses</code> has an SD of 0.54, against 0.82 for a single imputation.
-The five imputations differ by an average SD of 0.66 within a student.
-Treating <code>w1_ses</code> as observed ignores that uncertainty.</li>
+<li><strong>Sample weighting.</strong> Weighted by the base-year student weight
+(<code>w1_weight</code>), the base-year math score (<code>w1_math</code>) has
+a mean of 50 and a population SD of 10 over observed respondents, matching
+the NCES T-score scaling. Its unweighted respondent mean is about 51,
+indicating that unweighted respondents overrepresent higher-scoring students
+relative to the weighted target population.</li>
+<li><strong>Complete-case coverage.</strong> Across <code>hsls_clean</code>,
+56.2% of students (unweighted) have non-missing values on all eight core
+analysis variables. Most incomplete records reflect unit nonresponse to an
+entire survey: the base-year student survey, the parent survey, or the first
+follow-up student survey.</li>
+<li><strong>Covariate imbalance under missingness.</strong> In unweighted
+comparisons over each group's non-missing base-year observations, students
+missing the first follow-up math score (<code>w2_math</code>) scored 0.44
+pooled SDs lower on base-year math (<code>w1_math</code>) and 0.29 pooled SDs
+lower on SES (<code>w1_ses</code>) than students with an observed first
+follow-up math score. Students missing parents' education
+(<code>w1_parents_edu</code>), nearly all due to parent-survey nonresponse,
+also scored 0.44 pooled SDs lower on base-year math than students with
+observed parents' education. Because complete-case restriction
+disproportionately excludes lower-scoring and lower-SES students, subsequent
+models must account for missing data rather than rely on listwise
+deletion.</li>
+<li><strong>SES imputation variance.</strong> Among students with
+parent-survey nonresponse, <code>w1_ses</code> has an unweighted
+between-student sample SD of 0.54, compared with 0.82 for a single
+imputation. Across the five imputations, the average within-student sample SD
+is 0.66. Treating <code>w1_ses</code> as an observed point value ignores that
+imputation uncertainty and understates SES dispersion.</li>
 </ul>
 ***/

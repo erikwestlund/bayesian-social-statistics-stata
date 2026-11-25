@@ -8,3 +8,7 @@ This project holds restricted data. Do not read or print files in `inputs/privat
 
 ## Project Notes
 
+### Series workflow
+
+This project is a port. Every post is built first in R, Stan, and Quarto (`~/Projects/bayesian-social-statistics-r`), then gets a StatsLab section at lab.phpstats.org. Port a post here only after Erik says the R post and its lab are final. A port reproduces the R notebook's numbers up to Monte Carlo error and follows its outline. `bayesian-social-statistics-r/.agents/skills/series-post/SKILL.md` has the details.
+

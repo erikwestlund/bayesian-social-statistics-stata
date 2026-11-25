@@ -1,9 +1,9 @@
-* 01_fetch_hsls.do: download the HSLS:09 public-use file and its
+* 01_fetch.do: download the HSLS:09 public-use file and its
 * documentation from NCES
 *
 * Run from master.do, or on its own from the project folder:
 *   do settings.do
-*   do do/01_fetch_hsls.do
+*   do do/hsls/01_fetch.do
 *
 * By downloading, you accept the NCES data usage agreement: use the data for
 * statistical purposes only, make no attempt to identify anyone, and do not

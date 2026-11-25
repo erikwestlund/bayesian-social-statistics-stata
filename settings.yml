@@ -21,6 +21,7 @@ default:
     notebooks: notebooks
     cache: outputs/private/cache
     outputs_private_figures: outputs/private/figures
+    outputs_private_models: outputs/private/models
     outputs_private_notebooks: outputs/private/notebooks
     outputs_private_reports: outputs/private/reports
     outputs_private_tables: outputs/private/tables
@@ -42,7 +43,7 @@ default:
   #             locked: true
   # HSLS:09 comes from NCES as a public-use file, but it stays under
   # private/: the files are large, and readers should download them from NCES
-  # and accept its data usage agreement themselves. do/01_fetch_hsls.do does
+  # and accept its data usage agreement themselves. do/hsls/01_fetch.do does
   # that. Read an entry with fw_use inputs.private.raw.hsls_student.
   data:
     inputs:
@@ -91,6 +92,52 @@ default:
               file. Downloaded from https://nces.ed.gov/pubs2018/2018140.pdf.
               SHA-256
               d5a9bef3822b76a964bf5b1ddd095bfbbbea4eb87330a88eb1b050951f6e837b.
+          els_crosswalk:
+            path: inputs/public/raw/els_crosswalk.csv
+            type: csv
+            description: >-
+              New names for the ELS:2002 variables the series uses, with labels,
+              recodes, value labels, and two groups of reserve codes: nonresponse
+              (missing) and codes for a survey component that did not apply
+              (skip). docs/missing-data.md explains the codes. The names follow
+              the HSLS:09 crosswalk in bayesian-social-statistics-r.
+              Extends the els-2002-r crosswalk with the 2012 variables (w4_).
+          els_doc_base_year:
+            path: inputs/public/raw/els_docs/2004405.pdf
+            locked: true
+            description: >-
+              ELS:2002 Base Year Data File User's Manual (NCES 2004-405): test
+              scaling (section 2.2.2, table 3) and the SES composite compared
+              with earlier studies (appendix H). Downloaded from
+              https://nces.ed.gov/pubs2004/2004405.pdf. SHA-256
+              af28f1cc9d91b9f67269fb3009ab269bc746de3572e782b1759f3cb59771e161.
+          els_doc_first_follow_up:
+            path: inputs/public/raw/els_docs/2006344.pdf
+            locked: true
+            description: >-
+              ELS:2002/04 Base-Year to First Follow-up Data File Documentation
+              (NCES 2006-344): first follow-up tests, imputation (appendix C), and
+              the SES composite (appendix H). Downloaded from
+              https://nces.ed.gov/pubs2006/2006344.pdf. SHA-256
+              0e2dea9236a2a766635e6d20d5d5d30df2d1bddedc123c71c29163435f036aa1.
+          els_codebook_first_follow_up:
+            path: inputs/public/raw/els_docs/2006344_4.pdf
+            locked: true
+            description: >-
+              ELS:2002/04 base-year to first follow-up electronic codebook, student
+              file (NCES 2006-344, appendix G): every variable with its
+              definition, SAS code for composites, and frequencies. Downloaded
+              from https://nces.ed.gov/pubs2006/2006344_4.pdf. SHA-256
+              d97d18706978a81765ec0deb9cc0b706b7e4bfa1c19622846a3f4f77b8217be2.
+          els_doc_third_follow_up:
+            path: inputs/public/raw/els_docs/2014364.pdf
+            locked: true
+            description: >-
+              ELS:2002 Base-Year to Third Follow-up Data File Documentation (NCES
+              2014-364), which documents the released file. Section 7.3.1 lists
+              the reserve codes; tables 44 and 45 list the weights. Downloaded
+              from https://nces.ed.gov/pubs2014/2014364.pdf. SHA-256
+              5b897f7d252eb8529ac492350d93b7c675576af66e6dbcafea1a15d63e8deeed.
       private:
         raw:
           hsls_zip:
@@ -117,18 +164,71 @@ default:
             type: csv
             locked: true
             description: HSLS:09 base-year school file, extracted from hsls_zip.
+          els_zip:
+            path: inputs/private/raw/els/ELS_2002-12_v1_0_CSV_Datasets.zip
+            locked: true
+            description: >-
+              ELS:2002 base year to third follow-up public-use file, CSV, as
+              downloaded from
+              https://nces.ed.gov/EDAT/Data/Zip/ELS_2002-12_v1_0_CSV_Datasets.zip.
+              SHA-256 b255f2c1821618cd7039f5ab7c4e6ed92caa536598cffc383b4f012deba411fb.
+              NCES data usage agreement: statistical use only, no attempt to
+              identify anyone, no linking to identifiable data.
+          els_student:
+            path: inputs/private/raw/els/els_02_12_byf3stu_v1_0.csv
+            type: csv
+            locked: true
+            description: >-
+              ELS:2002 student file, base year to third follow-up, extracted from
+              els_zip. One row per sample member (16,197), 6,571 variables.
+              Missing values are negative reserve codes (-1 to -9; NCES 2014-364,
+              section 7.3.1). Several composites, such as SES, have real
+              negative values.
+          els_school:
+            path: inputs/private/raw/els/els_02_12_byf1sch_v1_0.csv
+            type: csv
+            locked: true
+            description: ELS:2002 base-year and first follow-up school file, extracted from els_zip.
+          els_brr_zip:
+            path: inputs/private/raw/els/ELS_2002-12_PETS_v1_0_Student_BRR_Stata_Datasets.zip
+            locked: true
+            description: >-
+              ELS:2002 student BRR replicate weights, Stata format, as downloaded from
+              https://nces.ed.gov/EDAT/Data/Zip/ELS_2002-12_PETS_v1_0_Student_BRR_Stata_Datasets.zip.
+              SHA-256 062a369807da47d80296a01b85fafba50873e56061a52c0603421b4509adf16d.
+              The same values as the SPSS file the R project reads.
+          els_brr:
+            path: inputs/private/raw/els/els_02_12_byf3stubrr_v1_0.dta
+            type: dta
+            locked: true
+            description: >-
+              ELS:2002 student replicate weights, extracted from els_brr_zip. One
+              row per sample member (16,197), keyed by STU_ID.
         final:
           hsls_clean:
             path: inputs/private/final/hsls_clean.csv
             type: csv
             description: >-
               One row per HSLS:09 student with the crosswalk's variables under
-              their new names. Built by do/02_clean_hsls.do.
+              their new names. Built by do/hsls/02_clean.do.
           hsls_clean_stata:
             path: inputs/private/final/hsls_clean.dta
             type: dta
             description: >-
               The same file as hsls_clean, with Stata variable and value labels.
+          els_clean:
+            path: inputs/private/final/els_clean.csv
+            type: csv
+            description: >-
+              One row per ELS:2002 sample member with the crosswalk's variables
+              under their new names, the school cluster, and the replicate
+              weights. Built by do/els/02_clean.do; the R and Python projects
+              build the same file.
+          els_clean_stata:
+            path: inputs/private/final/els_clean.dta
+            type: dta
+            description: >-
+              The same file as els_clean, with Stata variable and value labels.
 
   # This project holds restricted data: fw_table and fw_graph save to the
   # private folders unless told public.
@@ -149,8 +249,8 @@ default:
   scaffold:
     seed_on_scaffold: true
     seed: "123"
-    set_theme_on_scaffold: false
-    stata_scheme: s2color
+    set_theme_on_scaffold: true
+    stata_scheme: s1color
     source_all_functions: true
 
   # Publishing destinations for fw_publish, to(NAME). A folder destination

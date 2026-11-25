@@ -1,4 +1,4 @@
-* 02_clean_hsls.do: build the analysis file from the HSLS:09 student file
+* 02_clean.do: build the analysis file from the HSLS:09 student file
 *
 * inputs/public/raw/hsls_crosswalk.csv drives every step: which NCES
 * variables to keep, missing-value codes, recodes, new names, and labels.
